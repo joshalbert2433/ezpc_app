@@ -31,10 +31,10 @@ export default function AdminSidebar() {
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-slate-900 border-r border-slate-800 flex flex-col z-50">
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-[var(--card)] border-r border-[var(--card-border)] flex flex-col z-50 transition-colors duration-300">
       <div className="p-8">
-        <Link href="/" className="text-2xl font-black tracking-tighter text-cyan-400 hover:opacity-80 transition-opacity flex items-center gap-2">
-          EZPC_ <span className="text-[10px] bg-cyan-500/10 text-cyan-400 px-1.5 py-0.5 rounded border border-cyan-500/20">ADMIN</span>
+        <Link href="/" className="text-2xl font-black tracking-tighter text-[var(--primary)] hover:opacity-80 transition-opacity flex items-center gap-2">
+          EZPC_ <span className="text-[10px] bg-[var(--primary)]/10 text-[var(--primary)] px-1.5 py-0.5 rounded border border-[var(--primary)]/20">ADMIN</span>
         </Link>
       </div>
 
@@ -47,8 +47,8 @@ export default function AdminSidebar() {
               href={item.href}
               className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all group ${
                 isActive 
-                  ? 'bg-cyan-500 text-black font-bold shadow-lg shadow-cyan-500/20' 
-                  : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                  ? 'bg-[var(--primary)] text-white dark:text-black font-bold shadow-lg shadow-[var(--primary)]/20' 
+                  : 'text-[var(--muted)] hover:bg-[var(--input)] hover:text-[var(--foreground)]'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -61,13 +61,13 @@ export default function AdminSidebar() {
         })}
       </nav>
 
-      <div className="p-4 mt-auto border-t border-slate-800">
+      <div className="p-4 mt-auto border-t border-[var(--card-border)]">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-red-500/10 hover:text-red-400 rounded-xl transition-all"
+          className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-500/5 rounded-xl transition-all font-bold"
         >
           <LogOut size={20} />
-          <span className="text-sm font-medium">Sign Out</span>
+          <span className="text-sm font-medium">Terminate Session</span>
         </button>
       </div>
     </aside>

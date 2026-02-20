@@ -5,6 +5,7 @@ import MainLayout from './MainLayout';
 import { SearchProvider, useSearch } from '../context/SearchContext';
 import { AuthProvider } from '../context/AuthContext';
 import ToasterProvider from './ToasterProvider';
+import { ThemeProvider } from './ThemeProvider';
 
 function MainLayoutWithSearch({ children }: { children: React.ReactNode }) {
   const { searchQuery, setSearchQuery } = useSearch();
@@ -18,13 +19,15 @@ function MainLayoutWithSearch({ children }: { children: React.ReactNode }) {
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AuthProvider>
-      <SearchProvider>
-        <ToasterProvider />
-        <MainLayoutWithSearch>
-          {children}
-        </MainLayoutWithSearch>
-      </SearchProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <SearchProvider>
+          <ToasterProvider />
+          <MainLayoutWithSearch>
+            {children}
+          </MainLayoutWithSearch>
+        </SearchProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

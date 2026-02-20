@@ -54,58 +54,58 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-80px)] items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md space-y-8 bg-slate-900/50 p-8 rounded-2xl border border-slate-800 backdrop-blur-sm">
+    <div className="flex min-h-[calc(100vh-80px)] items-center justify-center px-4 py-12 transition-colors duration-300">
+      <div className="w-full max-w-md space-y-8 bg-[var(--card)] p-10 rounded-3xl border border-[var(--card-border)] shadow-2xl backdrop-blur-sm">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-black tracking-tight text-white">
-            Create Account<span className="text-cyan-400">_</span>
+          <h2 className="mt-6 text-center text-3xl font-black tracking-tight text-[var(--foreground)] uppercase">
+            Create Account<span className="text-[var(--primary)]">_</span>
           </h2>
-          <p className="mt-2 text-center text-sm text-slate-400">
-            Join EZPC and start building your dream rig
+          <p className="mt-2 text-center text-xs font-black uppercase tracking-widest text-[var(--muted)]">
+            Initialize new user profile
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Full Name</label>
+              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Full Identity</label>
               <input
                 {...register('name')}
                 type="text"
-                className={`block w-full bg-slate-800 border ${
-                  errors.name ? 'border-red-500' : 'border-slate-700'
-                } rounded-lg py-2.5 px-4 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 transition-colors`}
+                className={`block w-full bg-[var(--input)] border ${
+                  errors.name ? 'border-red-500' : 'border-[var(--card-border)]'
+                } rounded-xl py-3 px-4 text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--primary)] transition-all`}
                 placeholder="John Doe"
               />
               {errors.name && (
-                <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
+                <p className="mt-1.5 text-[10px] font-black text-red-500 uppercase tracking-tight">{errors.name.message}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Email address</label>
+              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Comms Address</label>
               <input
                 {...register('email')}
                 type="email"
-                className={`block w-full bg-slate-800 border ${
-                  errors.email ? 'border-red-500' : 'border-slate-700'
-                } rounded-lg py-2.5 px-4 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 transition-colors`}
+                className={`block w-full bg-[var(--input)] border ${
+                  errors.email ? 'border-red-500' : 'border-[var(--card-border)]'
+                } rounded-xl py-3 px-4 text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--primary)] transition-all`}
                 placeholder="name@example.com"
               />
               {errors.email && (
-                <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+                <p className="mt-1.5 text-[10px] font-black text-red-500 uppercase tracking-tight">{errors.email.message}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
+              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Access Key</label>
               <input
                 {...register('password')}
                 type="password"
-                className={`block w-full bg-slate-800 border ${
-                  errors.password ? 'border-red-500' : 'border-slate-700'
-                } rounded-lg py-2.5 px-4 text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 transition-colors`}
+                className={`block w-full bg-[var(--input)] border ${
+                  errors.password ? 'border-red-500' : 'border-[var(--card-border)]'
+                } rounded-xl py-3 px-4 text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--primary)] transition-all`}
                 placeholder="••••••••"
               />
               {errors.password && (
-                <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
+                <p className="mt-1.5 text-[10px] font-black text-red-500 uppercase tracking-tight">{errors.password.message}</p>
               )}
             </div>
           </div>
@@ -114,16 +114,16 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-3 px-4 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-4 px-4 rounded-xl bg-[var(--primary)] hover:opacity-90 text-white dark:text-black font-black uppercase tracking-[0.2em] text-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(34,211,238,0.2)]"
             >
-              {loading ? 'Creating Account...' : 'Register'}
+              {loading ? 'Processing...' : 'Execute Initialization'}
             </button>
           </div>
         </form>
-        <div className="text-center text-sm">
-          <span className="text-slate-400">Already have an account? </span>
-          <Link href="/login" className="font-bold text-cyan-400 hover:text-cyan-300 transition-colors">
-            Sign In
+        <div className="text-center text-xs font-black uppercase tracking-widest">
+          <span className="text-[var(--muted)]">Already active? </span>
+          <Link href="/login" className="text-[var(--primary)] hover:opacity-80 transition-colors">
+            Sign In Here
           </Link>
         </div>
       </div>

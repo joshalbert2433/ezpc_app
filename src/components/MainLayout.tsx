@@ -10,7 +10,7 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-dark text-slate-200 font-sans">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans">
       <Header />
       {children}
     </div>

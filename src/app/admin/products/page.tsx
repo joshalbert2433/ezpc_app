@@ -71,53 +71,53 @@ export default function AdminProductsPage() {
   );
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-8 animate-in fade-in duration-500 transition-colors duration-300">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white">Products Catalog<span className="text-cyan-400">_</span></h1>
-          <p className="text-slate-400 mt-1">Manage, update, and soft-delete system components</p>
+          <h1 className="text-3xl font-black text-[var(--foreground)] uppercase tracking-tighter">Products Catalog<span className="text-[var(--primary)]">_</span></h1>
+          <p className="text-[var(--muted)] mt-1 font-medium">Manage, update, and soft-delete system components</p>
         </div>
         <button 
           onClick={openAddModal}
-          className="bg-cyan-500 hover:bg-cyan-400 text-black px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-cyan-500/20"
+          className="bg-[var(--primary)] hover:opacity-90 text-white dark:text-black px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-[var(--primary)]/20 text-xs uppercase tracking-widest"
         >
-          <Plus size={20} /> Add Component
+          <Plus size={18} /> Add Component
         </button>
       </header>
 
-      <div className="flex gap-4 items-center bg-slate-900 border border-slate-800 p-4 rounded-xl">
-        <Search className="text-slate-500" size={20} />
+      <div className="flex gap-4 items-center bg-[var(--card)] border border-[var(--card-border)] p-4 rounded-2xl shadow-sm">
+        <Search className="text-[var(--muted)]" size={20} />
         <input 
           type="text" 
-          placeholder="Filter by name or brand..."
-          className="bg-transparent border-none outline-none text-white w-full text-sm"
+          placeholder="Filter by designation or manufacturer..."
+          className="bg-transparent border-none outline-none text-[var(--foreground)] w-full text-sm font-medium placeholder:text-[var(--muted)]"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+      <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-slate-800 bg-slate-900/50">
-                <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider">Product</th>
-                <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider">Category</th>
-                <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-center">Stock</th>
-                <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider">Price</th>
-                <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-right">Actions</th>
+              <tr className="border-b border-[var(--card-border)] bg-[var(--input)]/50">
+                <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em]">Designation</th>
+                <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em]">Category</th>
+                <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] text-center">Inventory</th>
+                <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em]">Valuation</th>
+                <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800">
+            <tbody className="divide-y divide-[var(--card-border)]">
               {loading ? (
-                <tr><td colSpan={5} className="px-6 py-10 text-center text-slate-500 animate-pulse">Loading components...</td></tr>
+                <tr><td colSpan={5} className="px-6 py-20 text-center text-[var(--muted)] animate-pulse font-black uppercase text-xs">Syncing Registry...</td></tr>
               ) : filteredProducts.length === 0 ? (
-                <tr><td colSpan={5} className="px-6 py-10 text-center text-slate-500 italic">No components found matching your search.</td></tr>
+                <tr><td colSpan={5} className="px-6 py-20 text-center text-[var(--muted)] italic font-medium">No results matched your search query.</td></tr>
               ) : filteredProducts.map((p) => (
-                <tr key={p._id} className="hover:bg-slate-800/50 transition-colors group">
+                <tr key={p._id} className="hover:bg-[var(--input)]/30 transition-colors group">
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform overflow-hidden relative border border-slate-700">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-[var(--input)] rounded-xl flex items-center justify-center text-[var(--primary)] group-hover:scale-110 transition-transform overflow-hidden relative border border-[var(--card-border)]">
                         {p.images && p.images.length > 0 ? (
                           <img src={p.images[0]} alt="" className="w-full h-full object-cover" />
                         ) : (
@@ -127,32 +127,34 @@ export default function AdminProductsPage() {
                           <div className={`absolute top-0 left-0 text-[6px] font-black px-1 rounded-br uppercase ${
                             p.badge === 'sale' ? 'bg-red-500 text-white' : 
                             p.badge === 'hot' ? 'bg-orange-500 text-white' : 
-                            'bg-cyan-500 text-black'
+                            'bg-[var(--primary)] text-white dark:text-black'
                           }`}>
                             {p.badge}
                           </div>
                         )}
                       </div>
-                      <span className="font-bold text-white">{p.name}</span>
+                      <span className="font-black text-[var(--foreground)] text-sm tracking-tight group-hover:text-[var(--primary)] transition-colors">{p.name}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-slate-400 text-sm">{p.category}</td>
+                  <td className="px-6 py-4">
+                    <span className="text-[10px] font-black text-[var(--muted)] uppercase tracking-widest">{p.category}</span>
+                  </td>
                   <td className="px-6 py-4 text-center">
-                    <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase ${
+                    <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase ${
                       p.stock <= 0 ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 
                       p.stock < 5 ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20' : 
                       'bg-green-500/10 text-green-500 border border-green-500/20'
                     }`}>
-                      {p.stock <= 0 ? 'Out of Stock' : `${p.stock} Units`}
+                      {p.stock <= 0 ? 'Empty' : `${p.stock} Units`}
                     </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-col">
-                      <span className={`${p.badge === 'sale' && p.salePrice ? 'text-xs text-slate-500 line-through' : 'text-cyan-400 font-black'}`}>
+                      <span className={`text-sm font-black ${p.badge === 'sale' && p.salePrice ? 'text-xs text-[var(--muted)] line-through' : 'text-[var(--primary)]'}`}>
                         ${p.price.toLocaleString()}
                       </span>
                       {p.badge === 'sale' && p.salePrice && (
-                        <span className="text-red-400 font-black text-sm">
+                        <span className="text-red-500 font-black text-sm">
                           ${p.salePrice.toLocaleString()}
                         </span>
                       )}
@@ -162,15 +164,15 @@ export default function AdminProductsPage() {
                     <div className="flex items-center justify-end gap-2">
                       <button 
                         onClick={() => openEditModal(p)}
-                        className="p-2 text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-all"
+                        className="p-2.5 text-[var(--muted)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/10 rounded-xl transition-all"
                       >
-                        <Edit2 size={18} />
+                        <Edit2 size={16} />
                       </button>
                       <button 
                         onClick={() => handleDelete(p._id)}
-                        className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                        className="p-2.5 text-[var(--muted)] hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
                       >
-                        <Trash2 size={18} />
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>
@@ -267,7 +269,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
         }
       }
       setFormData({ ...formData, images: newImageUrls });
-      toast.success('Images optimized and ready');
+      toast.success('Assets ready');
     } catch (err) {
       toast.error('Upload failed');
     } finally {
@@ -285,7 +287,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
       const newImages = formData.images.filter((_: any, i: number) => i !== deleteModal.index);
       setFormData({ ...formData, images: newImages });
       setDeleteModal({ isOpen: false, index: null });
-      toast.success('Image removed');
+      toast.success('Asset removed');
     }
   };
 
@@ -294,7 +296,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
     const [selectedImage] = newImages.splice(index, 1);
     newImages.unshift(selectedImage);
     setFormData({ ...formData, images: newImages });
-    toast.success('Main image updated');
+    toast.success('Primary updated');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -317,13 +319,13 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
       });
 
       if (res.ok) {
-        toast.success(product ? 'Product updated' : 'Product created');
+        toast.success(product ? 'Data updated' : 'Created successfully');
         onSuccess();
       } else {
         toast.error('Save failed');
       }
     } catch (err) {
-      toast.error('Error occurred');
+      toast.error('Connection error');
     } finally {
       setLoading(false);
     }
@@ -331,64 +333,66 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
 
   return (
     <>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
-        <div className="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
-          <div className="flex items-center justify-between p-6 border-b border-slate-800 shrink-0">
-            <h2 className="text-xl font-black text-white flex items-center gap-2">
-              <Package className="text-cyan-400" size={24} />
-              {product ? 'Modify Component' : 'New System Component'}
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+        <div className="bg-[var(--card)] border border-[var(--card-border)] w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+          <div className="flex items-center justify-between p-6 border-b border-[var(--card-border)] shrink-0 bg-[var(--input)]/30">
+            <h2 className="text-xl font-black text-[var(--foreground)] flex items-center gap-2 uppercase tracking-tighter">
+              <Package className="text-[var(--primary)]" size={24} />
+              {product ? 'Registry Update' : 'New System Unit'}
             </h2>
-            <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors">
+            <button onClick={onClose} className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors p-2">
               <X size={24} />
             </button>
           </div>
           
-          <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto custom-scrollbar">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form onSubmit={handleSubmit} className="p-8 space-y-8 overflow-y-auto custom-scrollbar">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="col-span-full">
-                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Component Designation</label>
+                <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">System Designation</label>
                 <input 
                   required
                   placeholder="e.g. RTX 5090 Ti Founders Edition"
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 outline-none transition-all placeholder:text-slate-600"
+                  className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all placeholder:text-[var(--muted)]/50 font-bold"
                   value={formData.name}
                   onChange={e => setFormData({...formData, name: e.target.value})}
                 />
               </div>
               
               <div>
-                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Hardware Category</label>
-                <select 
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 outline-none transition-all appearance-none cursor-pointer"
-                  value={formData.category}
-                  onChange={e => setFormData({...formData, category: e.target.value})}
-                >
-                  <option value="GPU">GPU / Graphics Card</option>
-                  <option value="CPU">CPU / Processor</option>
-                  <option value="RAM">RAM / Memory</option>
-                  <option value="SSD">Storage / SSD</option>
-                  <option value="PSU">Power Supply</option>
-                  <option value="Monitor">Monitor / Display</option>
-                  <option value="Motherboard">Motherboard</option>
-                </select>
+                <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">Unit Class</label>
+                <div className="relative">
+                  <select 
+                    className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all appearance-none cursor-pointer font-bold"
+                    value={formData.category}
+                    onChange={e => setFormData({...formData, category: e.target.value})}
+                  >
+                    <option value="GPU">GPU / Graphics</option>
+                    <option value="CPU">CPU / Logic</option>
+                    <option value="RAM">RAM / Memory</option>
+                    <option value="SSD">SSD / Storage</option>
+                    <option value="PSU">PSU / Power</option>
+                    <option value="Monitor">Display / Unit</option>
+                    <option value="Motherboard">Base / PCB</option>
+                  </select>
+                </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Manufacturer / Brand</label>
+                <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">Manufacturer</label>
                 <input 
                   required
-                  placeholder="e.g. ASUS, NVIDIA, AMD"
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 outline-none transition-all placeholder:text-slate-600"
+                  placeholder="e.g. ASUS, NVIDIA"
+                  className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all placeholder:text-[var(--muted)]/50 font-bold"
                   value={formData.brand}
                   onChange={e => setFormData({...formData, brand: e.target.value})}
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Status Badge</label>
-                <div className="grid grid-cols-2 gap-2">
+                <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">Status ID</label>
+                <div className="grid grid-cols-2 gap-3">
                   {[
-                    { id: '', label: 'None', icon: Tag },
+                    { id: '', label: 'Standard', icon: Tag },
                     { id: 'sale', label: 'Sale', icon: Percent },
                     { id: 'hot', label: 'Hot', icon: Flame },
                     { id: 'featured', label: 'Featured', icon: TrendingUp }
@@ -397,10 +401,10 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                       key={item.id}
                       type="button"
                       onClick={() => setFormData({...formData, badge: item.id})}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-[10px] font-black uppercase transition-all ${
+                      className={`flex items-center justify-center gap-2 px-3 py-3 rounded-xl border text-[9px] font-black uppercase transition-all ${
                         formData.badge === item.id 
-                          ? 'bg-cyan-500 border-cyan-400 text-black shadow-[0_0_10px_rgba(34,211,238,0.3)]' 
-                          : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'
+                          ? 'bg-[var(--primary)] border-[var(--primary)] text-white dark:text-black shadow-lg shadow-[var(--primary)]/20' 
+                          : 'bg-[var(--input)] border-[var(--card-border)] text-[var(--muted)] hover:border-slate-400'
                       }`}
                     >
                       <item.icon size={14} />
@@ -411,14 +415,14 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
               </div>
 
               <div>
-                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Stock Inventory</label>
+                <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">Stock Units</label>
                 <div className="relative">
-                  <Database className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                  <Database className="absolute left-5 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={18} />
                   <input 
                     type="number"
                     min="0"
                     required
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-12 pr-4 py-3 text-white focus:border-cyan-500 outline-none transition-all"
+                    className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-2xl pl-14 pr-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all font-bold"
                     value={formData.stock}
                     onChange={e => setFormData({...formData, stock: Number(e.target.value)})}
                   />
@@ -426,11 +430,11 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
               </div>
 
               <div className={formData.badge === 'sale' ? 'col-span-1' : 'col-span-full'}>
-                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Base Price (USD)</label>
+                <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">Base Value (USD)</label>
                 <input 
                   type="number"
                   required
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 outline-none transition-all"
+                  className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all font-bold"
                   value={formData.price}
                   onChange={e => setFormData({...formData, price: Number(e.target.value)})}
                 />
@@ -438,11 +442,11 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
 
               {formData.badge === 'sale' && (
                 <div className="animate-in slide-in-from-top-2 duration-300">
-                  <label className="block text-[10px] font-black text-red-500 uppercase tracking-widest mb-2">Discounted Sale Price</label>
+                  <label className="block text-[10px] font-black text-red-500 uppercase tracking-[0.2em] mb-3">Discounted Value</label>
                   <input 
                     type="number"
                     required
-                    className="w-full bg-red-500/5 border border-red-500/20 rounded-xl px-4 py-3 text-red-400 focus:border-red-500 outline-none transition-all"
+                    className="w-full bg-red-500/5 border border-red-500/20 rounded-2xl px-5 py-4 text-red-500 focus:border-red-500 outline-none transition-all font-black"
                     value={formData.salePrice}
                     onChange={e => setFormData({...formData, salePrice: Number(e.target.value)})}
                   />
@@ -451,9 +455,9 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                  Visual Interface Gallery <span className="text-slate-600 font-bold">({formData.images.length}/{maxImages})</span>
+              <div className="flex items-center justify-between mb-4">
+                <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em]">
+                  Interface Assets <span className="text-[var(--primary)] font-black">({formData.images.length}/{maxImages})</span>
                 </label>
                 <input 
                   type="file" 
@@ -467,30 +471,30 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                   type="button" 
                   disabled={isUploading || formData.images.length >= maxImages}
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center gap-2 text-[10px] font-black bg-slate-800 text-cyan-400 px-4 py-2 rounded-xl border border-slate-700 hover:border-cyan-500/50 hover:bg-slate-700 transition-all uppercase disabled:opacity-30"
+                  className="flex items-center gap-2 text-[9px] font-black bg-[var(--input)] text-[var(--primary)] px-4 py-2.5 rounded-xl border border-[var(--card-border)] hover:border-[var(--primary)] transition-all uppercase disabled:opacity-30"
                 >
                   {isUploading ? <Loader2 className="animate-spin" size={14} /> : <Upload size={14} />}
-                  {isUploading ? 'Compiling Visuals...' : 'Add Neural Assets'}
+                  {isUploading ? 'Compiling...' : 'Upload Visuals'}
                 </button>
               </div>
               
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 bg-slate-950 p-4 rounded-2xl border border-slate-800 min-h-[120px]">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 bg-[var(--input)]/50 p-5 rounded-3xl border border-[var(--card-border)] min-h-[140px]">
                 {formData.images.map((url: string, index: number) => (
-                  <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-slate-800 group ring-1 ring-white/5">
+                  <div key={index} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--card-border)] group ring-1 ring-black/5 shadow-sm">
                     <img src={url} alt="" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                     
                     {index === 0 && (
-                      <div className="absolute top-2 left-2 bg-cyan-500 text-black text-[7px] font-black px-1.5 py-0.5 rounded shadow-lg z-10 uppercase tracking-tighter">
+                      <div className="absolute top-2 left-2 bg-[var(--primary)] text-white dark:text-black text-[7px] font-black px-1.5 py-0.5 rounded shadow-lg z-10 uppercase tracking-tighter">
                         PRIMARY
                       </div>
                     )}
 
-                    <div className="absolute inset-0 bg-dark/80 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center gap-2 p-2">
+                    <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center gap-2 p-2">
                       {index !== 0 && (
                         <button 
                           type="button"
                           onClick={() => setMainImage(index)}
-                          className="w-full flex items-center justify-center gap-1.5 py-1.5 bg-cyan-500 text-black rounded-lg text-[8px] font-black hover:bg-cyan-400 transition-colors uppercase"
+                          className="w-full flex items-center justify-center gap-1.5 py-2 bg-[var(--primary)] text-white dark:text-black rounded-lg text-[8px] font-black hover:opacity-90 transition-colors uppercase"
                         >
                           <Star size={10} fill="currentColor" /> Set Main
                         </button>
@@ -498,7 +502,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                       <button 
                         type="button" 
                         onClick={() => triggerDeleteConfirm(index)}
-                        className="w-full flex items-center justify-center gap-1.5 py-1.5 bg-red-500/20 text-red-500 rounded-lg text-[8px] font-black hover:bg-red-500 hover:text-white border border-red-500/30 transition-colors uppercase"
+                        className="w-full flex items-center justify-center gap-1.5 py-2 bg-red-500 text-white rounded-lg text-[8px] font-black hover:bg-red-600 transition-colors uppercase"
                       >
                         <Trash size={10} /> Delete
                       </button>
@@ -506,46 +510,46 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                   </div>
                 ))}
                 {formData.images.length === 0 && !isUploading && (
-                  <div className="col-span-full flex flex-col items-center justify-center py-10 text-slate-700 italic text-[10px] gap-3">
-                    <div className="w-12 h-12 rounded-full border border-slate-800 flex items-center justify-center">
-                      <ImageIcon size={20} className="opacity-20" />
+                  <div className="col-span-full flex flex-col items-center justify-center py-12 text-[var(--muted)] italic text-[9px] gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-[var(--input)] flex items-center justify-center border border-[var(--card-border)]">
+                      <ImageIcon size={24} className="opacity-20" />
                     </div>
-                    NO VISUAL DATA INITIALIZED
+                    INITIALIZE VISUAL INTERFACE
                   </div>
                 )}
                 {isUploading && (
-                  <div className="aspect-square bg-slate-900 rounded-xl flex items-center justify-center border border-cyan-500/20 border-dashed animate-pulse">
-                    <Loader2 className="animate-spin text-cyan-500" size={24} />
+                  <div className="aspect-square bg-[var(--input)] rounded-2xl flex items-center justify-center border border-[var(--primary)]/30 border-dashed animate-pulse">
+                    <Loader2 className="animate-spin text-[var(--primary)]" size={24} />
                   </div>
                 )}
               </div>
             </div>
 
             <div>
-              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Technical Specifications Summary</label>
+              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">Unit Specifications Registry</label>
               <textarea 
                 required
-                placeholder="List key hardware specs..."
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 outline-none transition-all h-32 resize-none placeholder:text-slate-600 text-sm leading-relaxed"
+                placeholder="List technical data points..."
+                className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all h-40 resize-none placeholder:text-[var(--muted)]/50 text-sm font-medium leading-relaxed"
                 value={formData.specs}
                 onChange={e => setFormData({...formData, specs: e.target.value})}
               />
             </div>
 
-            <div className="flex gap-4 pt-4">
+            <div className="flex gap-4 pt-4 border-t border-[var(--card-border)]">
               <button 
                 type="button"
                 onClick={onClose}
-                className="px-8 py-4 rounded-xl bg-slate-800 text-slate-400 font-black uppercase text-xs hover:bg-slate-700 transition-all"
+                className="px-8 py-4 rounded-2xl bg-[var(--input)] text-[var(--muted)] font-black uppercase text-[10px] tracking-widest hover:bg-[var(--card-border)] transition-all border border-[var(--card-border)]"
               >
-                Abort
+                Cancel
               </button>
               <button 
                 type="submit"
                 disabled={loading || isUploading}
-                className="flex-1 bg-cyan-500 hover:bg-cyan-400 text-black font-black py-4 rounded-xl transition-all disabled:opacity-50 shadow-[0_0_30px_rgba(34,211,238,0.2)] uppercase text-xs tracking-[0.2em]"
+                className="flex-1 bg-[var(--primary)] hover:opacity-90 text-white dark:text-black font-black py-4 rounded-2xl transition-all disabled:opacity-50 shadow-xl shadow-[var(--primary)]/20 uppercase text-[10px] tracking-[0.2em]"
               >
-                {loading ? 'Transmitting...' : product ? 'Overwrite Data' : 'Execute Creation'}
+                {loading ? 'Transmitting...' : product ? 'Overwrite Local Cache' : 'Execute System Creation'}
               </button>
             </div>
           </form>
@@ -556,8 +560,8 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ isOpen: false, index: null })}
         onConfirm={handleRemoveImage}
-        title="Wipe Visual Data?"
-        message="Are you sure you want to permanently delete this neural asset from the component gallery?"
+        title="Wipe Visual Cache?"
+        message="Are you sure you want to permanently delete this neural asset from the unit gallery?"
         itemPreview={deleteModal.index !== null ? formData.images[deleteModal.index] : undefined}
       />
     </>
