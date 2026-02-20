@@ -15,11 +15,17 @@ const ProductSchema = new mongoose.Schema({
   rating: { type: Number, default: 0 },
   reviews: { type: Number, default: 0 },
   description: String,
-  image: String,
+  images: { type: [String], default: [] },
   fullSpecs: [ProductSpecSchema], // Flexible attributes for any category
+  deletedAt: { type: Date, default: null },
 }, { timestamps: true });
 
 // Add a text index for search functionality
 ProductSchema.index({ name: 'text', brand: 'text', category: 'text', specs: 'text' });
 
-export default mongoose.models.Product || mongoose.model('Product', ProductSchema);
+// Force delete the model if it exists to ensure schema updates are applied
+if (mongoose.models.Product) {
+  delete mongoose.models.Product;
+}
+
+export default mongoose.model('Product', ProductSchema);

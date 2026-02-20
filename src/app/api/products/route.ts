@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     await dbConnect();
     const { searchParams } = new URL(request.url);
     
-    const query: any = {};
+    const query: any = { deletedAt: null };
     
     // Filtering logic
     const category = searchParams.get('category');
@@ -45,7 +45,18 @@ export async function POST(request: NextRequest) {
   try {
     await dbConnect();
     const body = await request.json();
-    const product = await Product.create(body);
+    
+    const product = await Product.create({
+      name: body.name,
+      category: body.category,
+      brand: body.brand,
+      price: body.price,
+      specs: body.specs,
+      images: body.images || [],
+      description: body.description,
+      fullSpecs: body.fullSpecs || []
+    });
+
     return NextResponse.json(product, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 400 });

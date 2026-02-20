@@ -1,30 +1,64 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Product from '@/models/Product';
-import mongoose from 'mongoose';
+import { getSession } from '@/lib/auth';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+async function checkAdmin() {
+  const session = await getSession();
+  return session && session.role === 'admin';
+}
+
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     await dbConnect();
-
-    let product;
-    if (mongoose.Types.ObjectId.isValid(id)) {
-      product = await Product.findById(id);
-    } else {
-      // Fallback for numeric IDs if they were seeded that way
-      product = await Product.findOne({ id: parseInt(id) });
-    }
-
-    if (!product) {
-      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
-    }
-
+    const product = await Product.findOne({ _id: id, deletedAt: null });
+    if (!product) return NextResponse.json({ message: 'Product not found' }, { status: 404 });
     return NextResponse.json(product);
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
+}
+
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  if (!(await checkAdmin())) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  
+  try {
+    const { id } = await params;
+    await dbConnect();
+    const body = await req.json();
+    
+    // Explicitly handle the fields to ensure they are updated
+    const updateData = {
+      name: body.name,
+      category: body.category,
+      brand: body.brand,
+      price: body.price,
+      specs: body.specs,
+      images: body.images,
+      description: body.description,
+      fullSpecs: body.fullSpecs
+    };
+
+    const product = await Product.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
+    if (!product) return NextResponse.json({ message: 'Product not found' }, { status: 404 });
+    return NextResponse.json(product);
+  } catch (error: any) {
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  if (!(await checkAdmin())) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  
+  try {
+    const { id } = await params;
+    await dbConnect();
+    // Soft delete by setting deletedAt
+    const product = await Product.findByIdAndUpdate(id, { deletedAt: new Date() }, { new: true });
+    if (!product) return NextResponse.json({ message: 'Product not found' }, { status: 404 });
+    return NextResponse.json({ message: 'Product soft-deleted successfully' });
+  } catch (error: any) {
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

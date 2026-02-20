@@ -4,7 +4,7 @@
 import { Search, ShoppingCart, Heart, User, Layers, LogOut, MapPin, User as UserIcon, Settings } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useSearch } from '../context/SearchContext';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -15,6 +15,10 @@ const Header: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Don't show public header on admin routes
+  if (pathname.startsWith('/admin')) return null;
 
   const handleAuthRequired = (e: React.MouseEvent, path: string) => {
     if (!user) {

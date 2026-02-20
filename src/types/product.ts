@@ -5,16 +5,20 @@ export interface ProductSpec {
 }
 
 export interface Product {
-  id: number;
+  id: string;
+  _id?: string;
   name: string;
   category: string;
   brand: string;
-  vram: string;
   price: number;
   specs: string;
   badge?: string;
   rating?: number;
   reviews?: number;
   description?: string;
+  images?: string[];
   fullSpecs?: ProductSpec[];
+  deletedAt?: Date | null;
+  createdAt?: string;
+  updatedAt?: string;
 }

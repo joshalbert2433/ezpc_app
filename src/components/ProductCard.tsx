@@ -26,7 +26,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     // Handle action here
     console.log(`${action} ${product.name}`);
-    alert(`${action === 'cart' ? 'Added to cart' : 'Added to wishlist'}: ${product.name}`);
   };
 
   const goToProduct = () => {
@@ -51,8 +50,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <Heart size={16} />
       </button>
       
-      <div className="aspect-square bg-slate-800 rounded-lg mb-4 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
-        <Cpu className="w-16 h-16 text-slate-700 group-hover:text-cyan-500/20 transition-colors" />
+      <div className="aspect-square bg-slate-800 rounded-lg mb-4 flex items-center justify-center group-hover:scale-105 transition-transform duration-500 overflow-hidden">
+        {product.images && product.images.length > 0 ? (
+          <img 
+            src={product.images[0]} 
+            alt={product.name} 
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <Cpu className="w-16 h-16 text-slate-700 group-hover:text-cyan-500/20 transition-colors" />
+        )}
       </div>
 
       <h4 className="font-bold text-slate-100 mb-1 line-clamp-1">{product.name}</h4>
