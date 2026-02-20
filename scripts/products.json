@@ -1,0 +1,66 @@
+[
+  { 
+    "name": "ASUS ROG Strix RTX 4090 OC", 
+    "category": "GPU", 
+    "brand": "ASUS", 
+    "price": 1999.99, 
+    "specs": "24GB GDDR6X • DLSS 3.5", 
+    "badge": "In Stock",
+    "rating": 4.9,
+    "reviews": 128,
+    "description": "The ASUS ROG Strix GeForce RTX 4090 brings a whole new meaning to going with the flow."
+  },
+  { 
+    "name": "AMD Ryzen 9 7950X3D", 
+    "category": "CPU", 
+    "brand": "AMD", 
+    "price": 699.00, 
+    "specs": "16 Cores • 32 Threads • 144MB Cache",
+    "badge": "Top Rated",
+    "rating": 4.9,
+    "reviews": 245,
+    "description": "The ultimate gaming processor, featuring AMD 3D V-Cache technology."
+  },
+  { 
+    "name": "Intel Core i9-14900K", 
+    "category": "CPU", 
+    "brand": "Intel", 
+    "price": 589.00, 
+    "specs": "24 Cores • 32 Threads • 6.0 GHz Turbo",
+    "rating": 4.8,
+    "reviews": 189,
+    "description": "Experience the power of the 14th Gen Intel Core i9-14900K processor."
+  },
+  { 
+    "name": "Corsair Vengeance RGB 32GB DDR5", 
+    "category": "RAM", 
+    "brand": "Corsair", 
+    "price": 124.99, 
+    "specs": "32GB (2x16GB) • 6000MHz • CL30",
+    "badge": "Best Seller",
+    "rating": 4.7,
+    "reviews": 512,
+    "description": "CORSAIR VENGEANCE RGB DDR5 memory delivers performance and style."
+  },
+  { 
+    "name": "Samsung Odyssey Neo G9", 
+    "category": "Monitor", 
+    "brand": "Samsung", 
+    "price": 1299.99, 
+    "specs": "49\" Curved • 240Hz • Mini-LED",
+    "badge": "Premium",
+    "rating": 4.6,
+    "reviews": 78,
+    "description": "Spellbinding visual quality and a new world of immersion."
+  },
+  { 
+    "name": "G.Skill Trident Z5 RGB 64GB", 
+    "category": "RAM", 
+    "brand": "G.Skill", 
+    "price": 219.99, 
+    "specs": "64GB (2x32GB) • 6400MHz • CL32",
+    "rating": 4.9,
+    "reviews": 88,
+    "description": "Trident Z5 RGB series DDR5 memory is designed for ultra-high performance."
+  }
+]
