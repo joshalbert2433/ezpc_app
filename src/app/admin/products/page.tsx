@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Edit2, Trash2, Search, X, Package, Image as ImageIcon, Trash, Upload, Loader2, Star, Check } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, X, Package, Image as ImageIcon, Trash, Upload, Loader2, Star, Check, Database, Tag, Flame, TrendingUp, Percent } from 'lucide-react';
 import toast from 'react-hot-toast';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 
@@ -11,6 +11,9 @@ interface Product {
   category: string;
   brand: string;
   price: number;
+  salePrice?: number;
+  stock: number;
+  badge: string;
   specs: string;
   images?: string[];
 }
@@ -100,7 +103,7 @@ export default function AdminProductsPage() {
               <tr className="border-b border-slate-800 bg-slate-900/50">
                 <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider">Product</th>
                 <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider">Category</th>
-                <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider">Brand</th>
+                <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-center">Stock</th>
                 <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider">Price</th>
                 <th className="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-wider text-right">Actions</th>
               </tr>
@@ -114,19 +117,47 @@ export default function AdminProductsPage() {
                 <tr key={p._id} className="hover:bg-slate-800/50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform overflow-hidden">
+                      <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform overflow-hidden relative border border-slate-700">
                         {p.images && p.images.length > 0 ? (
                           <img src={p.images[0]} alt="" className="w-full h-full object-cover" />
                         ) : (
                           <Package size={20} />
+                        )}
+                        {p.badge && (
+                          <div className={`absolute top-0 left-0 text-[6px] font-black px-1 rounded-br uppercase ${
+                            p.badge === 'sale' ? 'bg-red-500 text-white' : 
+                            p.badge === 'hot' ? 'bg-orange-500 text-white' : 
+                            'bg-cyan-500 text-black'
+                          }`}>
+                            {p.badge}
+                          </div>
                         )}
                       </div>
                       <span className="font-bold text-white">{p.name}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-slate-400 text-sm">{p.category}</td>
-                  <td className="px-6 py-4 text-slate-400 text-sm">{p.brand}</td>
-                  <td className="px-6 py-4 text-cyan-400 font-black">${p.price.toLocaleString()}</td>
+                  <td className="px-6 py-4 text-center">
+                    <span className={`px-2 py-1 rounded-md text-[10px] font-black uppercase ${
+                      p.stock <= 0 ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 
+                      p.stock < 5 ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20' : 
+                      'bg-green-500/10 text-green-500 border border-green-500/20'
+                    }`}>
+                      {p.stock <= 0 ? 'Out of Stock' : `${p.stock} Units`}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col">
+                      <span className={`${p.badge === 'sale' && p.salePrice ? 'text-xs text-slate-500 line-through' : 'text-cyan-400 font-black'}`}>
+                        ${p.price.toLocaleString()}
+                      </span>
+                      {p.badge === 'sale' && p.salePrice && (
+                        <span className="text-red-400 font-black text-sm">
+                          ${p.salePrice.toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button 
@@ -170,7 +201,6 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
   const [maxImages, setMaxImages] = useState(6);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // State for image deletion confirmation
   const [deleteModal, setDeleteModal] = useState<{isOpen: boolean, index: number | null}>({
     isOpen: false,
     index: null
@@ -181,6 +211,9 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
     category: product?.category || 'GPU',
     brand: product?.brand || '',
     price: product?.price || 0,
+    salePrice: product?.salePrice || 0,
+    stock: product?.stock || 0,
+    badge: product?.badge || '',
     specs: product?.specs || '',
     images: Array.isArray(product?.images) ? [...product.images] : [],
   });
@@ -192,6 +225,9 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
         category: product.category || 'GPU',
         brand: product.brand || '',
         price: product.price || 0,
+        salePrice: product.salePrice || 0,
+        stock: product.stock || 0,
+        badge: product.badge || '',
         specs: product.specs || '',
         images: Array.isArray(product.images) ? [...product.images] : [],
       });
@@ -228,14 +264,12 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
         if (res.ok) {
           const data = await res.json();
           newImageUrls.push(data.url);
-        } else {
-          toast.error(`Failed to upload ${file.name}`);
         }
       }
       setFormData({ ...formData, images: newImageUrls });
-      toast.success('Images uploaded and optimized');
+      toast.success('Images optimized and ready');
     } catch (err) {
-      toast.error('Upload error occurred');
+      toast.error('Upload failed');
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -286,10 +320,10 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
         toast.success(product ? 'Product updated' : 'Product created');
         onSuccess();
       } else {
-        toast.error('Failed to save product');
+        toast.error('Save failed');
       }
     } catch (err) {
-      toast.error('Error saving product');
+      toast.error('Error occurred');
     } finally {
       setLoading(false);
     }
@@ -300,66 +334,126 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
         <div className="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
           <div className="flex items-center justify-between p-6 border-b border-slate-800 shrink-0">
-            <h2 className="text-xl font-black text-white">
-              {product ? 'Edit Component' : 'Add New Component'}
+            <h2 className="text-xl font-black text-white flex items-center gap-2">
+              <Package className="text-cyan-400" size={24} />
+              {product ? 'Modify Component' : 'New System Component'}
             </h2>
             <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors">
               <X size={24} />
             </button>
           </div>
           
-          <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto custom-scrollbar">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <label className="block text-xs font-black text-slate-500 uppercase mb-1.5">Component Name</label>
+          <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto custom-scrollbar">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="col-span-full">
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Component Designation</label>
                 <input 
                   required
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:border-cyan-500 outline-none transition-colors"
+                  placeholder="e.g. RTX 5090 Ti Founders Edition"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 outline-none transition-all placeholder:text-slate-600"
                   value={formData.name}
                   onChange={e => setFormData({...formData, name: e.target.value})}
                 />
               </div>
               
               <div>
-                <label className="block text-xs font-black text-slate-500 uppercase mb-1.5">Category</label>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Hardware Category</label>
                 <select 
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:border-cyan-500 outline-none transition-colors"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 outline-none transition-all appearance-none cursor-pointer"
                   value={formData.category}
                   onChange={e => setFormData({...formData, category: e.target.value})}
                 >
-                  <option value="GPU">GPU</option>
-                  <option value="CPU">CPU</option>
-                  <option value="RAM">RAM</option>
-                  <option value="Monitor">Monitor</option>
+                  <option value="GPU">GPU / Graphics Card</option>
+                  <option value="CPU">CPU / Processor</option>
+                  <option value="RAM">RAM / Memory</option>
+                  <option value="SSD">Storage / SSD</option>
+                  <option value="PSU">Power Supply</option>
+                  <option value="Monitor">Monitor / Display</option>
                   <option value="Motherboard">Motherboard</option>
                 </select>
               </div>
+
               <div>
-                <label className="block text-xs font-black text-slate-500 uppercase mb-1.5">Price (USD)</label>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Manufacturer / Brand</label>
+                <input 
+                  required
+                  placeholder="e.g. ASUS, NVIDIA, AMD"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 outline-none transition-all placeholder:text-slate-600"
+                  value={formData.brand}
+                  onChange={e => setFormData({...formData, brand: e.target.value})}
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Status Badge</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { id: '', label: 'None', icon: Tag },
+                    { id: 'sale', label: 'Sale', icon: Percent },
+                    { id: 'hot', label: 'Hot', icon: Flame },
+                    { id: 'featured', label: 'Featured', icon: TrendingUp }
+                  ].map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setFormData({...formData, badge: item.id})}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-[10px] font-black uppercase transition-all ${
+                        formData.badge === item.id 
+                          ? 'bg-cyan-500 border-cyan-400 text-black shadow-[0_0_10px_rgba(34,211,238,0.3)]' 
+                          : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'
+                      }`}
+                    >
+                      <item.icon size={14} />
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Stock Inventory</label>
+                <div className="relative">
+                  <Database className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                  <input 
+                    type="number"
+                    min="0"
+                    required
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-12 pr-4 py-3 text-white focus:border-cyan-500 outline-none transition-all"
+                    value={formData.stock}
+                    onChange={e => setFormData({...formData, stock: Number(e.target.value)})}
+                  />
+                </div>
+              </div>
+
+              <div className={formData.badge === 'sale' ? 'col-span-1' : 'col-span-full'}>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Base Price (USD)</label>
                 <input 
                   type="number"
                   required
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:border-cyan-500 outline-none transition-colors"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 outline-none transition-all"
                   value={formData.price}
                   onChange={e => setFormData({...formData, price: Number(e.target.value)})}
                 />
               </div>
+
+              {formData.badge === 'sale' && (
+                <div className="animate-in slide-in-from-top-2 duration-300">
+                  <label className="block text-[10px] font-black text-red-500 uppercase tracking-widest mb-2">Discounted Sale Price</label>
+                  <input 
+                    type="number"
+                    required
+                    className="w-full bg-red-500/5 border border-red-500/20 rounded-xl px-4 py-3 text-red-400 focus:border-red-500 outline-none transition-all"
+                    value={formData.salePrice}
+                    onChange={e => setFormData({...formData, salePrice: Number(e.target.value)})}
+                  />
+                </div>
+              )}
             </div>
 
             <div>
-              <label className="block text-xs font-black text-slate-500 uppercase mb-1.5">Brand</label>
-              <input 
-                required
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:border-cyan-500 outline-none transition-colors"
-                value={formData.brand}
-                onChange={e => setFormData({...formData, brand: e.target.value})}
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block text-xs font-black text-slate-500 uppercase tracking-widest">
-                  Media Gallery <span className="text-slate-600 font-bold">({formData.images.length}/{maxImages})</span>
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                  Visual Interface Gallery <span className="text-slate-600 font-bold">({formData.images.length}/{maxImages})</span>
                 </label>
                 <input 
                   type="file" 
@@ -373,43 +467,38 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                   type="button" 
                   disabled={isUploading || formData.images.length >= maxImages}
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center gap-2 text-[10px] font-black bg-cyan-500/10 text-cyan-400 px-3 py-1.5 rounded-lg border border-cyan-500/20 hover:bg-cyan-500 hover:text-black transition-all uppercase disabled:opacity-30"
+                  className="flex items-center gap-2 text-[10px] font-black bg-slate-800 text-cyan-400 px-4 py-2 rounded-xl border border-slate-700 hover:border-cyan-500/50 hover:bg-slate-700 transition-all uppercase disabled:opacity-30"
                 >
-                  {isUploading ? <Loader2 className="animate-spin" size={12} /> : <Upload size={12} />}
-                  {isUploading ? 'Optimizing...' : 'Upload Images'}
+                  {isUploading ? <Loader2 className="animate-spin" size={14} /> : <Upload size={14} />}
+                  {isUploading ? 'Compiling Visuals...' : 'Add Neural Assets'}
                 </button>
               </div>
               
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 bg-slate-900/50 p-4 rounded-xl border border-slate-800 min-h-[100px]">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 bg-slate-950 p-4 rounded-2xl border border-slate-800 min-h-[120px]">
                 {formData.images.map((url: string, index: number) => (
-                  <div key={index} className="relative aspect-square rounded-lg overflow-hidden border border-slate-700 group">
-                    <img src={url} alt="" className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                  <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-slate-800 group ring-1 ring-white/5">
+                    <img src={url} alt="" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                     
                     {index === 0 && (
-                      <div className="absolute top-1.5 left-1.5 bg-cyan-500 text-black text-[7px] font-black px-1.5 py-0.5 rounded shadow-lg z-10 uppercase tracking-tighter">
-                        Main
+                      <div className="absolute top-2 left-2 bg-cyan-500 text-black text-[7px] font-black px-1.5 py-0.5 rounded shadow-lg z-10 uppercase tracking-tighter">
+                        PRIMARY
                       </div>
                     )}
 
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                    <div className="absolute inset-0 bg-dark/80 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center gap-2 p-2">
                       {index !== 0 && (
                         <button 
                           type="button"
                           onClick={() => setMainImage(index)}
-                          className="flex items-center gap-1.5 px-2 py-1 bg-cyan-500 text-black rounded text-[9px] font-black hover:bg-cyan-400 transition-colors shadow-lg uppercase"
+                          className="w-full flex items-center justify-center gap-1.5 py-1.5 bg-cyan-500 text-black rounded-lg text-[8px] font-black hover:bg-cyan-400 transition-colors uppercase"
                         >
-                          <Star size={10} fill="currentColor" /> Main
+                          <Star size={10} fill="currentColor" /> Set Main
                         </button>
-                      )}
-                      {index === 0 && (
-                        <div className="flex items-center gap-1.5 px-2 py-1 bg-white/10 text-cyan-400 rounded text-[9px] font-black border border-cyan-500/30 uppercase backdrop-blur-sm">
-                          <Check size={10} /> Active
-                        </div>
                       )}
                       <button 
                         type="button" 
                         onClick={() => triggerDeleteConfirm(index)}
-                        className="flex items-center gap-1.5 px-2 py-1 bg-red-500 text-white rounded text-[9px] font-black hover:bg-red-400 transition-colors shadow-lg uppercase"
+                        className="w-full flex items-center justify-center gap-1.5 py-1.5 bg-red-500/20 text-red-500 rounded-lg text-[8px] font-black hover:bg-red-500 hover:text-white border border-red-500/30 transition-colors uppercase"
                       >
                         <Trash size={10} /> Delete
                       </button>
@@ -417,36 +506,48 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                   </div>
                 ))}
                 {formData.images.length === 0 && !isUploading && (
-                  <div className="col-span-full flex flex-col items-center justify-center py-6 text-slate-600 italic text-xs gap-2">
-                    <ImageIcon size={24} className="opacity-20" />
-                    No visual assets uploaded
+                  <div className="col-span-full flex flex-col items-center justify-center py-10 text-slate-700 italic text-[10px] gap-3">
+                    <div className="w-12 h-12 rounded-full border border-slate-800 flex items-center justify-center">
+                      <ImageIcon size={20} className="opacity-20" />
+                    </div>
+                    NO VISUAL DATA INITIALIZED
                   </div>
                 )}
                 {isUploading && (
-                  <div className="aspect-square bg-slate-800 rounded-lg flex items-center justify-center border border-slate-700 border-dashed animate-pulse">
-                    <Loader2 className="animate-spin text-cyan-500" size={20} />
+                  <div className="aspect-square bg-slate-900 rounded-xl flex items-center justify-center border border-cyan-500/20 border-dashed animate-pulse">
+                    <Loader2 className="animate-spin text-cyan-500" size={24} />
                   </div>
                 )}
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-black text-slate-500 uppercase mb-1.5">Specs Summary</label>
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Technical Specifications Summary</label>
               <textarea 
                 required
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:border-cyan-500 outline-none transition-colors h-24 resize-none"
+                placeholder="List key hardware specs..."
+                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-cyan-500 outline-none transition-all h-32 resize-none placeholder:text-slate-600 text-sm leading-relaxed"
                 value={formData.specs}
                 onChange={e => setFormData({...formData, specs: e.target.value})}
               />
             </div>
 
-            <button 
-              type="submit"
-              disabled={loading || isUploading}
-              className="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-black py-4 rounded-xl mt-4 transition-all disabled:opacity-50 shadow-[0_0_20px_rgba(34,211,238,0.2)] shrink-0 active:scale-[0.98]"
-            >
-              {loading ? 'Transmitting Data...' : product ? 'Update System Component' : 'Finalize Component Creation'}
-            </button>
+            <div className="flex gap-4 pt-4">
+              <button 
+                type="button"
+                onClick={onClose}
+                className="px-8 py-4 rounded-xl bg-slate-800 text-slate-400 font-black uppercase text-xs hover:bg-slate-700 transition-all"
+              >
+                Abort
+              </button>
+              <button 
+                type="submit"
+                disabled={loading || isUploading}
+                className="flex-1 bg-cyan-500 hover:bg-cyan-400 text-black font-black py-4 rounded-xl transition-all disabled:opacity-50 shadow-[0_0_30px_rgba(34,211,238,0.2)] uppercase text-xs tracking-[0.2em]"
+              >
+                {loading ? 'Transmitting...' : product ? 'Overwrite Data' : 'Execute Creation'}
+              </button>
+            </div>
           </form>
         </div>
       </div>
@@ -455,8 +556,8 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ isOpen: false, index: null })}
         onConfirm={handleRemoveImage}
-        title="Remove Image?"
-        message="This will permanently disconnect this visual asset from the component gallery."
+        title="Wipe Visual Data?"
+        message="Are you sure you want to permanently delete this neural asset from the component gallery?"
         itemPreview={deleteModal.index !== null ? formData.images[deleteModal.index] : undefined}
       />
     </>

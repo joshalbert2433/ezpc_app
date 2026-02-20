@@ -10,6 +10,8 @@ const ProductSchema = new mongoose.Schema({
   category: { type: String, required: true, index: true }, // GPU, CPU, RAM, Monitor, etc.
   brand: { type: String, required: true, index: true },
   price: { type: Number, required: true },
+  salePrice: { type: Number, default: 0 },
+  stock: { type: Number, default: 0 },
   specs: { type: String, required: true }, // Summary string for the card
   badge: String,
   rating: { type: Number, default: 0 },

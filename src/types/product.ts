@@ -11,6 +11,8 @@ export interface Product {
   category: string;
   brand: string;
   price: number;
+  salePrice?: number;
+  stock: number;
   specs: string;
   badge?: string;
   rating?: number;

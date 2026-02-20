@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 
 const Header: React.FC = () => {
   const { searchQuery, setSearchQuery } = useSearch();
-  const { user, loading } = useAuth();
+  const { user, loading, cart, wishlist } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -74,13 +74,22 @@ const Header: React.FC = () => {
             <Layers className="w-5 h-5 hover:text-cyan-400 cursor-pointer" title="PC Builder" />
           </Link>
           
-          <Link href="/wishlist" onClick={(e) => handleAuthRequired(e, '/wishlist')}>
-            <Heart className="w-5 h-5 hover:text-cyan-400 cursor-pointer" />
+          <Link href="/wishlist" onClick={(e) => handleAuthRequired(e, '/wishlist')} className="relative group">
+            <Heart className={`w-5 h-5 transition-colors ${wishlist.length > 0 ? 'text-red-500 fill-red-500' : 'group-hover:text-cyan-400'}`} />
+            {wishlist.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-white text-black text-[10px] font-black px-1.5 rounded-full border border-dark shadow-lg animate-in fade-in zoom-in duration-300">
+                {wishlist.length}
+              </span>
+            )}
           </Link>
 
           <Link href="/cart" onClick={(e) => handleAuthRequired(e, '/cart')} className="relative cursor-pointer group">
-            <ShoppingCart className="w-5 h-5 group-hover:text-cyan-400" />
-            <span className="absolute -top-2 -right-2 bg-cyan-500 text-black text-[10px] font-bold px-1.5 rounded-full">2</span>
+            <ShoppingCart className="w-5 h-5 group-hover:text-cyan-400 transition-colors" />
+            {cart.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-cyan-500 text-black text-[10px] font-black px-1.5 rounded-full border border-dark shadow-lg animate-in fade-in zoom-in duration-300">
+                {cart.reduce((acc, curr) => acc + curr.quantity, 0)}
+              </span>
+            )}
           </Link>
           
           <div className="relative" ref={dropdownRef}>

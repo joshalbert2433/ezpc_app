@@ -35,12 +35,14 @@ import 'swiper/css/pagination';
 export default function ProductDetails() {
   const { id } = useParams();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, addToCart, toggleWishlist, wishlist } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'specs' | 'reviews'>('specs');
   const [zoomImage, setZoomImage] = useState<string | null>(null);
+
+  const isWishlisted = wishlist.some(item => (item._id || item.id) === id);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -48,6 +50,7 @@ export default function ProductDetails() {
         const response = await fetch(`/api/products/${id}`);
         if (response.ok) {
           const data = await response.json();
+          // Map _id to id and ensure images is present
           setProduct({ 
             ...data, 
             id: data._id || data.id,
@@ -66,13 +69,12 @@ export default function ProductDetails() {
     fetchProduct();
   }, [id]);
 
-  const handleAction = (action: string) => {
-    if (!user) {
-      toast.error(`Please login to add to ${action}`);
-      router.push('/login');
-      return;
+  const handleAction = async (action: string) => {
+    if (action === 'cart') {
+      await addToCart(id as string, quantity);
+    } else {
+      await toggleWishlist(id as string);
     }
-    toast.success(`${product?.name} added to ${action}!`);
   };
 
   if (loading) {
@@ -96,6 +98,7 @@ export default function ProductDetails() {
   }
 
   const images = product.images && product.images.length > 0 ? product.images : [];
+  const isOnSale = product.badge === 'sale' && product.salePrice && product.salePrice > 0;
 
   return (
     <main className="max-w-7xl mx-auto px-6 py-8">
@@ -110,8 +113,14 @@ export default function ProductDetails() {
         <div className="space-y-6">
           <div className="aspect-square bg-slate-900 border border-slate-800 rounded-3xl relative overflow-hidden group shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)]">
             {product.badge && (
-              <span className="absolute top-6 left-6 bg-cyan-500 text-black text-[10px] font-black px-3 py-1 rounded-full z-20 shadow-[0_0_15px_rgba(34,211,238,0.5)] uppercase">
-                {product.badge}
+              <span className={`absolute top-6 left-6 text-[10px] font-black px-3 py-1.5 rounded-full z-20 shadow-lg uppercase tracking-widest ${
+                product.badge === 'sale' ? 'bg-red-500 text-white animate-pulse' :
+                product.badge === 'hot' ? 'bg-orange-500 text-white shadow-orange-500/50' :
+                'bg-cyan-500 text-black shadow-cyan-500/50'
+              }`}>
+                {product.badge === 'sale' && product.price && product.salePrice 
+                  ? `${Math.round((1 - product.salePrice / product.price) * 100)}% DISCOUNT` 
+                  : product.badge}
               </span>
             )}
             
@@ -221,43 +230,65 @@ export default function ProductDetails() {
             
             <div className="flex items-end justify-between mb-8">
               <div>
-                <span className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] block mb-2">Unit Price</span>
-                <span className="text-5xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-                  ${product.price.toLocaleString()}
+                <span className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] block mb-2">
+                  {isOnSale ? 'Promotional Price' : 'Unit Price'}
                 </span>
+                <div className="flex items-center gap-4">
+                  <span className={`text-5xl font-black ${isOnSale ? 'text-red-500' : 'text-white'} drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]`}>
+                    ${(isOnSale ? product.salePrice : product.price)?.toLocaleString()}
+                  </span>
+                  {isOnSale && (
+                    <span className="text-xl text-slate-500 line-through font-black">
+                      ${product.price.toLocaleString()}
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="text-right">
                 <div className="flex items-center gap-2 justify-end mb-1">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping"></div>
-                  <span className="text-cyan-400 text-xs font-black uppercase tracking-widest">Status: Ready</span>
+                  <div className={`w-1.5 h-1.5 rounded-full ${product.stock > 0 ? 'bg-cyan-400 animate-ping' : 'bg-red-500'}`}></div>
+                  <span className={`text-xs font-black uppercase tracking-widest ${product.stock > 0 ? 'text-cyan-400' : 'text-red-500'}`}>
+                    {product.stock > 0 ? 'Status: Ready' : 'Status: Depleted'}
+                  </span>
                 </div>
-                <span className="text-slate-600 text-[9px] font-black uppercase tracking-widest">Global Warehouse Access</span>
+                <span className="text-slate-600 text-[9px] font-black uppercase tracking-widest">
+                  {product.stock > 0 ? `${product.stock} Units Available` : 'Restocking in progress'}
+                </span>
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex items-center justify-between bg-dark border border-slate-800 rounded-2xl px-5 py-3 sm:w-36">
-                <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="text-slate-500 hover:text-cyan-400 transition-all p-1 hover:scale-125">
+                <button 
+                  onClick={() => setQuantity(q => Math.max(1, q - 1))} 
+                  disabled={product.stock <= 0}
+                  className="text-slate-500 hover:text-cyan-400 transition-all p-1 hover:scale-125 disabled:opacity-20"
+                >
                   <Minus className="w-4 h-4" />
                 </button>
-                <span className="font-black text-xl text-white w-8 text-center">{quantity}</span>
-                <button onClick={() => setQuantity(q => q + 1)} className="text-slate-500 hover:text-cyan-400 transition-all p-1 hover:scale-125">
+                <span className="font-black text-xl text-white w-8 text-center">{product.stock > 0 ? quantity : 0}</span>
+                <button 
+                  onClick={() => setQuantity(q => Math.min(product.stock, q + 1))} 
+                  disabled={product.stock <= 0 || quantity >= product.stock}
+                  className="text-slate-500 hover:text-cyan-400 transition-all p-1 hover:scale-125 disabled:opacity-20"
+                >
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
               
               <button 
                 onClick={() => handleAction('cart')}
-                className="flex-1 bg-cyan-500 hover:bg-cyan-400 text-black font-black rounded-2xl py-4 flex items-center justify-center gap-3 transition-all active:scale-95 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)]"
+                disabled={product.stock <= 0}
+                className="flex-1 bg-cyan-500 hover:bg-cyan-400 text-black font-black rounded-2xl py-4 flex items-center justify-center gap-3 transition-all active:scale-95 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] disabled:bg-slate-800 disabled:text-slate-600 disabled:shadow-none disabled:cursor-not-allowed"
               >
-                <ShoppingCart className="w-5 h-5" /> INITIALIZE CART
+                <ShoppingCart className="w-5 h-5" /> {product.stock > 0 ? 'INITIALIZE CART' : 'OUT OF STOCK'}
               </button>
               
               <button 
                 onClick={() => handleAction('wishlist')}
-                className="p-5 bg-slate-800 border border-slate-700 rounded-2xl hover:bg-slate-700 hover:text-red-400 transition-all text-slate-400 group"
+                className={`p-5 border border-slate-700 rounded-2xl transition-all group ${isWishlisted ? 'bg-red-500/10 border-red-500/50 text-red-500' : 'bg-slate-800 hover:bg-slate-700 hover:text-red-400 text-slate-400'}`}
               >
-                <Heart className="w-5 h-5 group-active:fill-red-400 transition-colors" />
+                <Heart className={`w-5 h-5 transition-colors ${isWishlisted ? 'fill-current' : ''}`} />
               </button>
             </div>
           </div>
