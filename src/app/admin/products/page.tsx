@@ -75,13 +75,13 @@ export default function AdminProductsPage() {
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black text-[var(--foreground)] uppercase tracking-tighter">Products Catalog<span className="text-[var(--primary)]">_</span></h1>
-          <p className="text-[var(--muted)] mt-1 font-medium">Manage, update, and soft-delete system components</p>
+          <p className="text-[var(--muted)] mt-1 font-medium">Manage, update, and soft-delete products</p>
         </div>
         <button 
           onClick={openAddModal}
           className="bg-[var(--primary)] hover:opacity-90 text-white dark:text-black px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-[var(--primary)]/20 text-xs uppercase tracking-widest"
         >
-          <Plus size={18} /> Add Component
+          <Plus size={18} /> Add Product
         </button>
       </header>
 
@@ -89,7 +89,7 @@ export default function AdminProductsPage() {
         <Search className="text-[var(--muted)]" size={20} />
         <input 
           type="text" 
-          placeholder="Filter by designation or manufacturer..."
+          placeholder="Filter by name or brand..."
           className="bg-transparent border-none outline-none text-[var(--foreground)] w-full text-sm font-medium placeholder:text-[var(--muted)]"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -101,16 +101,16 @@ export default function AdminProductsPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-[var(--card-border)] bg-[var(--input)]/50">
-                <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em]">Designation</th>
+                <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em]">Product Name</th>
                 <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em]">Category</th>
                 <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] text-center">Inventory</th>
-                <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em]">Valuation</th>
+                <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em]">Price</th>
                 <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--card-border)]">
               {loading ? (
-                <tr><td colSpan={5} className="px-6 py-20 text-center text-[var(--muted)] animate-pulse font-black uppercase text-xs">Syncing Registry...</td></tr>
+                <tr><td colSpan={5} className="px-6 py-20 text-center text-[var(--muted)] animate-pulse font-black uppercase text-xs">Loading Products...</td></tr>
               ) : filteredProducts.length === 0 ? (
                 <tr><td colSpan={5} className="px-6 py-20 text-center text-[var(--muted)] italic font-medium">No results matched your search query.</td></tr>
               ) : filteredProducts.map((p) => (
@@ -338,7 +338,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
           <div className="flex items-center justify-between p-6 border-b border-[var(--card-border)] shrink-0 bg-[var(--input)]/30">
             <h2 className="text-xl font-black text-[var(--foreground)] flex items-center gap-2 uppercase tracking-tighter">
               <Package className="text-[var(--primary)]" size={24} />
-              {product ? 'Registry Update' : 'New System Unit'}
+              {product ? 'Update Product' : 'New Product'}
             </h2>
             <button onClick={onClose} className="text-[var(--muted)] hover:text-[var(--foreground)] transition-colors p-2">
               <X size={24} />
@@ -348,7 +348,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
           <form onSubmit={handleSubmit} className="p-8 space-y-8 overflow-y-auto custom-scrollbar">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="col-span-full">
-                <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">System Designation</label>
+                <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">Product Name</label>
                 <input 
                   required
                   placeholder="e.g. RTX 5090 Ti Founders Edition"
@@ -401,7 +401,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                       key={item.id}
                       type="button"
                       onClick={() => setFormData({...formData, badge: item.id})}
-                      className={`flex items-center justify-center gap-2 px-3 py-3 rounded-xl border text-[9px] font-black uppercase transition-all ${
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-[9px] font-black uppercase transition-all ${
                         formData.badge === item.id 
                           ? 'bg-[var(--primary)] border-[var(--primary)] text-white dark:text-black shadow-lg shadow-[var(--primary)]/20' 
                           : 'bg-[var(--input)] border-[var(--card-border)] text-[var(--muted)] hover:border-slate-400'
@@ -526,7 +526,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
             </div>
 
             <div>
-              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">Unit Specifications Registry</label>
+              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">Product Specifications</label>
               <textarea 
                 required
                 placeholder="List technical data points..."

@@ -63,7 +63,7 @@ const Header: React.FC = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]" />
           <input 
             type="text"
-            placeholder="Search components (RTX 5090, Ryzen 9...)"
+            placeholder="Search products (RTX 5090, Ryzen 9...)"
             className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:border-[var(--primary)] transition-all text-[var(--foreground)] placeholder:text-[var(--muted)]"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -137,22 +137,29 @@ const Header: React.FC = () => {
                   </Link>
                 )}
 
-                <Link 
-                  href="/profile" 
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--foreground)] hover:bg-[var(--input)] hover:text-[var(--primary)] transition-all font-medium"
-                  onClick={() => setIsDropdownOpen(false)}
-                >
-                  <UserIcon size={16} /> Profile Details
-                </Link>
-
-                <Link 
-                  href="/addresses" 
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--foreground)] hover:bg-[var(--input)] hover:text-[var(--primary)] transition-all font-medium"
-                  onClick={() => setIsDropdownOpen(false)}
-                >
-                  <MapPin size={16} /> Logistic Points
-                </Link>
-
+                                <Link
+                                  href="/profile"
+                                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--foreground)] hover:bg-[var(--input)] hover:text-[var(--primary)] transition-all font-medium"
+                                  onClick={() => setIsDropdownOpen(false)}
+                                >
+                                  <UserIcon size={16} /> Profile Details
+                                </Link>
+                
+                                <Link
+                                  href="/profile/orders"
+                                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--foreground)] hover:bg-[var(--input)] hover:text-[var(--primary)] transition-all font-medium"
+                                  onClick={() => setIsDropdownOpen(false)}
+                                >
+                                  <ShoppingCart size={16} /> My Orders
+                                </Link>
+                
+                                <Link
+                                  href="/addresses"
+                                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--foreground)] hover:bg-[var(--input)] hover:text-[var(--primary)] transition-all font-medium"
+                                  onClick={() => setIsDropdownOpen(false)}
+                                >
+                                  <MapPin size={16} /> Logistic Points
+                                </Link>
                 <div className="h-px bg-[var(--card-border)] my-1"></div>
                 
                 <button 

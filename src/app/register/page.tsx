@@ -58,16 +58,16 @@ export default function RegisterPage() {
       <div className="w-full max-w-md space-y-8 bg-[var(--card)] p-10 rounded-3xl border border-[var(--card-border)] shadow-2xl backdrop-blur-sm">
         <div>
           <h2 className="mt-6 text-center text-3xl font-black tracking-tight text-[var(--foreground)] uppercase">
-            Create Account<span className="text-[var(--primary)]">_</span>
+            Sign Up<span className="text-[var(--primary)]">_</span>
           </h2>
           <p className="mt-2 text-center text-xs font-black uppercase tracking-widest text-[var(--muted)]">
-            Initialize new user profile
+            Join us and start building your dream PC.
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <div>
-              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Full Identity</label>
+              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Full Name</label>
               <input
                 {...register('name')}
                 type="text"
@@ -81,7 +81,7 @@ export default function RegisterPage() {
               )}
             </div>
             <div>
-              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Comms Address</label>
+              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Email Address</label>
               <input
                 {...register('email')}
                 type="email"
@@ -95,7 +95,7 @@ export default function RegisterPage() {
               )}
             </div>
             <div>
-              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Access Key</label>
+              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Password</label>
               <input
                 {...register('password')}
                 type="password"
@@ -116,14 +116,14 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full flex justify-center py-4 px-4 rounded-xl bg-[var(--primary)] hover:opacity-90 text-white dark:text-black font-black uppercase tracking-[0.2em] text-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(34,211,238,0.2)]"
             >
-              {loading ? 'Processing...' : 'Execute Initialization'}
+              {loading ? 'Processing...' : 'Sign Up'}
             </button>
           </div>
         </form>
         <div className="text-center text-xs font-black uppercase tracking-widest">
-          <span className="text-[var(--muted)]">Already active? </span>
+          <span className="text-[var(--muted)]">Already have an account? </span>
           <Link href="/login" className="text-[var(--primary)] hover:opacity-80 transition-colors">
-            Sign In Here
+            Sign In
           </Link>
         </div>
       </div>

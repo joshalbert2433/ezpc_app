@@ -71,7 +71,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-white font-bold">Max Images per Product</p>
-                <p className="text-sm text-slate-500">Limits how many pictures can be uploaded for a single component.</p>
+                <p className="text-sm text-slate-500">Limits how many pictures can be uploaded for a single product.</p>
               </div>
               <div className="flex items-center gap-3">
                 <input 

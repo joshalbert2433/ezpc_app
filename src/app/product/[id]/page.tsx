@@ -80,7 +80,7 @@ export default function ProductDetails() {
     return (
       <div className="max-w-7xl mx-auto px-6 py-20 text-center flex flex-col items-center justify-center space-y-4">
         <div className="w-12 h-12 border-4 border-[var(--primary)]/20 border-t-[var(--primary)] rounded-full animate-spin"></div>
-        <p className="animate-pulse text-[var(--muted)] font-black uppercase tracking-widest text-xs">Initializing Neural Link...</p>
+        <p className="animate-pulse text-[var(--muted)] font-black uppercase tracking-widest text-xs">Loading Product...</p>
       </div>
     );
   }
@@ -88,7 +88,7 @@ export default function ProductDetails() {
   if (!product) {
     return (
       <div className="max-w-7xl mx-auto px-6 py-20 text-center">
-        <h2 className="text-3xl font-black mb-4 text-[var(--foreground)]">SYSTEM_ERROR: PRODUCT_NOT_FOUND</h2>
+        <h2 className="text-3xl font-black mb-4 text-[var(--foreground)]">Product Not Found</h2>
         <Link href="/" className="inline-block bg-[var(--primary)] hover:opacity-90 text-white dark:text-black px-8 py-3 rounded-xl font-black transition-all">
           RETURN TO SHOP
         </Link>
@@ -104,7 +104,7 @@ export default function ProductDetails() {
       {/* Breadcrumbs / Back */}
       <Link href="/" className="inline-flex items-center gap-2 text-[var(--muted)] hover:text-[var(--primary)] mb-8 transition-colors group">
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
-        <span className="text-xs font-black uppercase tracking-widest">Back to components</span>
+        <span className="text-xs font-black uppercase tracking-widest">Back to products</span>
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -242,7 +242,7 @@ export default function ProductDetails() {
                 <div className="flex items-center gap-2 justify-end mb-1">
                   <div className={`w-1.5 h-1.5 rounded-full ${product.stock > 0 ? 'bg-cyan-400 animate-ping' : 'bg-red-500'}`}></div>
                   <span className={`text-xs font-black uppercase tracking-widest ${product.stock > 0 ? 'text-[var(--primary)]' : 'text-red-500'}`}>
-                    {product.stock > 0 ? 'Status: Ready' : 'Status: Depleted'}
+                    {product.stock > 0 ? 'Status: Ready' : 'Out of Stock'}
                   </span>
                 </div>
                 <span className="text-[var(--muted)] text-[9px] font-black uppercase tracking-widest">
@@ -267,7 +267,7 @@ export default function ProductDetails() {
                 disabled={product.stock <= 0}
                 className="flex-1 bg-[var(--primary)] hover:opacity-90 text-white dark:text-black font-black rounded-2xl py-4 flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg disabled:bg-[var(--card-border)] disabled:text-[var(--muted)] disabled:shadow-none disabled:cursor-not-allowed"
               >
-                <ShoppingCart className="w-5 h-5" /> {product.stock > 0 ? 'INITIALIZE CART' : 'OUT OF STOCK'}
+                <ShoppingCart className="w-5 h-5" /> {product.stock > 0 ? 'ADD TO CART' : 'OUT OF STOCK'}
               </button>
               
               <button 

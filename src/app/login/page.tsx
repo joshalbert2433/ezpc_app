@@ -57,16 +57,16 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-8 bg-[var(--card)] p-10 rounded-3xl border border-[var(--card-border)] shadow-2xl backdrop-blur-sm">
         <div>
           <h2 className="mt-6 text-center text-3xl font-black tracking-tight text-[var(--foreground)] uppercase">
-            Authentication<span className="text-[var(--primary)]">_</span>
+            Sign In to Your Account<span className="text-[var(--primary)]">_</span>
           </h2>
           <p className="mt-2 text-center text-xs font-black uppercase tracking-widest text-[var(--muted)]">
-            Access secure system terminal
+            Your digital world awaits.
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <div>
-              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">User Designation</label>
+              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Email Address</label>
               <input
                 {...register('email')}
                 type="email"
@@ -80,7 +80,7 @@ export default function LoginPage() {
               )}
             </div>
             <div>
-              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Access Key</label>
+              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Password</label>
               <input
                 {...register('password')}
                 type="password"
@@ -101,14 +101,14 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full flex justify-center py-4 px-4 rounded-xl bg-[var(--primary)] hover:opacity-90 text-white dark:text-black font-black uppercase tracking-[0.2em] text-xs transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(34,211,238,0.2)]"
             >
-              {loading ? 'Verifying...' : 'Initialize Session'}
+              {loading ? 'Verifying...' : 'Sign In'}
             </button>
           </div>
         </form>
         <div className="text-center text-xs font-black uppercase tracking-widest">
-          <span className="text-[var(--muted)]">New operator? </span>
+          <span className="text-[var(--muted)]">Don't have an account? </span>
           <Link href="/register" className="text-[var(--primary)] hover:opacity-80 transition-colors">
-            Register Account
+            Sign Up Now
           </Link>
         </div>
       </div>

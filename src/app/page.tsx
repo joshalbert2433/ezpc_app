@@ -76,9 +76,9 @@ export default function Home() {
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-xl font-bold">
             {loading ? (
-              "Loading components..."
+              "Loading products..."
             ) : products.length > 0 ? (
-              <>Showing <span className="text-cyan-400">{products.length}</span> components</>
+              <>Showing <span className="text-cyan-400">{products.length}</span> products</>
             ) : (
               "No products found"
             )}

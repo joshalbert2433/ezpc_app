@@ -1,14 +1,32 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ShoppingCart, Trash2, ArrowLeft, Plus, Minus, Package, ShieldCheck } from 'lucide-react';
+import { ShoppingCart, Trash2, ArrowLeft, Plus, Minus, Package, ShieldCheck, Square, CheckSquare } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function CartPage() {
   const { cart, loading, user, addToCart, removeFromCart } = useAuth();
+  const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
 
-  const subtotal = cart.reduce((acc, curr) => acc + (curr.product?.price * curr.quantity), 0);
+  useEffect(() => {
+    // Select all items by default when cart loads or changes
+    setSelectedItemIds(cart.map(item => item.product?._id || '').filter(Boolean));
+  }, [cart]);
+
+  const handleCheckboxChange = (productId: string, isChecked: boolean) => {
+    setSelectedItemIds(prev => 
+      isChecked ? [...prev, productId] : prev.filter(id => id !== productId)
+    );
+  };
+
+  const handleSelectAllChange = (isChecked: boolean) => {
+    setSelectedItemIds(isChecked ? cart.map(item => item.product?._id || '').filter(Boolean) : []);
+  };
+
+  const selectedItems = cart.filter(item => selectedItemIds.includes(item.product?._id || ''));
+
+  const subtotal = selectedItems.reduce((acc, curr) => acc + (curr.product?.price * curr.quantity), 0);
   const tax = subtotal * 0.05; // 5% example tax
   const total = subtotal + tax;
 
@@ -16,7 +34,7 @@ export default function CartPage() {
     return (
       <div className="max-w-7xl mx-auto px-6 py-20 text-center flex flex-col items-center justify-center space-y-4">
         <div className="w-12 h-12 border-4 border-[var(--primary)]/20 border-t-[var(--primary)] rounded-full animate-spin"></div>
-        <p className="animate-pulse text-[var(--muted)] font-black uppercase tracking-widest text-xs">Accessing your secure cart...</p>
+        <p className="animate-pulse text-[var(--muted)] font-black uppercase tracking-widest text-xs">Loading your cart...</p>
       </div>
     );
   }
@@ -36,7 +54,7 @@ export default function CartPage() {
       {!user ? (
         <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-20 text-center shadow-sm">
           <ShoppingCart size={48} className="mx-auto text-[var(--card-border)] mb-6" />
-          <h2 className="text-2xl font-black text-[var(--foreground)] mb-4">Authentication Required</h2>
+          <h2 className="text-2xl font-black text-[var(--foreground)] mb-4">Login Required</h2>
           <p className="text-[var(--muted)] max-w-md mx-auto mb-8">Please sign in to view and manage your shopping cart.</p>
           <Link href="/login" className="bg-[var(--primary)] hover:opacity-90 text-white dark:text-black px-8 py-3 rounded-xl font-black transition-all">
             SIGN IN
@@ -46,7 +64,7 @@ export default function CartPage() {
         <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-20 text-center shadow-sm">
           <ShoppingCart size={48} className="mx-auto text-[var(--card-border)] mb-6" />
           <h2 className="text-2xl font-black text-[var(--foreground)] mb-4">Your Cart is Empty</h2>
-          <p className="text-[var(--muted)] max-w-md mx-auto mb-8">You haven't added any components to your cart yet.</p>
+          <p className="text-[var(--muted)] max-w-md mx-auto mb-8">You haven't added any products to your cart yet.</p>
           <Link href="/" className="bg-[var(--primary)] hover:opacity-90 text-white dark:text-black px-8 py-3 rounded-xl font-black transition-all">
             GO TO SHOP
           </Link>
@@ -55,8 +73,34 @@ export default function CartPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
+            <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-2xl p-4 flex items-center justify-between shadow-sm">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input 
+                  type="checkbox"
+                  className="form-checkbox text-[var(--primary)] h-5 w-5 rounded focus:ring-[var(--primary)]"
+                  checked={selectedItemIds.length === cart.length && cart.length > 0}
+                  onChange={(e) => handleSelectAllChange(e.target.checked)}
+                />
+                <span className="text-sm font-black uppercase tracking-widest text-[var(--foreground)]">Select All ({selectedItemIds.length} / {cart.length})</span>
+              </label>
+              {selectedItemIds.length > 0 && (
+                 <button 
+                  onClick={() => setSelectedItemIds([])}
+                  className="text-red-500 hover:text-red-400 text-xs font-bold"
+                 >
+                   Clear Selection
+                 </button>
+              )}
+            </div>
+
             {cart.map((item) => (
-              <div key={item.product?._id} className="bg-[var(--card)] border border-[var(--card-border)] rounded-2xl p-6 flex gap-6 hover:border-[var(--primary)]/30 transition-all group shadow-sm">
+              <div key={item.product?._id} className="bg-[var(--card)] border border-[var(--card-border)] rounded-2xl p-6 flex gap-4 hover:border-[var(--primary)]/30 transition-all group shadow-sm">
+                <input 
+                  type="checkbox"
+                  className="form-checkbox text-[var(--primary)] h-5 w-5 rounded focus:ring-[var(--primary)] mt-0.5"
+                  checked={selectedItemIds.includes(item.product?._id || '')}
+                  onChange={(e) => handleCheckboxChange(item.product?._id || '', e.target.checked)}
+                />
                 <div className="w-24 h-24 bg-[var(--input)] rounded-xl overflow-hidden flex-shrink-0 border border-[var(--card-border)]">
                   {item.product?.images && item.product.images.length > 0 ? (
                     <img src={item.product.images[0]} alt={item.product.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
@@ -127,9 +171,14 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <button className="w-full bg-[var(--primary)] hover:opacity-90 text-white dark:text-black font-black py-4 rounded-xl mb-4 transition-all active:scale-95 shadow-lg uppercase tracking-widest text-sm">
+              <Link 
+                href={`/checkout?selectedItems=${encodeURIComponent(JSON.stringify(selectedItemIds))}`} 
+                className={`w-full bg-[var(--primary)] hover:opacity-90 text-white dark:text-black font-black py-4 rounded-xl mb-4 transition-all active:scale-95 shadow-lg uppercase tracking-widest text-sm flex justify-center items-center ${selectedItemIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                aria-disabled={selectedItemIds.length === 0}
+                onClick={(e) => selectedItemIds.length === 0 && e.preventDefault()}
+              >
                 Proceed to Checkout
-              </button>
+              </Link>
               
               <div className="flex items-center gap-2 justify-center text-[10px] text-[var(--muted)] font-black uppercase tracking-widest">
                 <ShieldCheck size={14} className="text-[var(--primary)]/50" /> Secure Checkout Verified
@@ -138,7 +187,7 @@ export default function CartPage() {
 
             <div className="bg-[var(--primary)]/5 border border-[var(--primary)]/10 rounded-2xl p-6">
               <p className="text-[10px] font-black text-[var(--primary)] uppercase tracking-widest mb-2">EZPC_ Advantage</p>
-              <p className="text-xs text-[var(--muted)] leading-relaxed">All components are fully tested and certified before shipping.</p>
+              <p className="text-xs text-[var(--muted)] leading-relaxed">All products are fully tested and certified before shipping.</p>
             </div>
           </div>
         </div>
