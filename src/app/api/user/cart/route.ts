@@ -37,43 +37,68 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 
   try {
-    const { productId, quantity = 1 } = await req.json();
+    const body = await req.json();
+    const { productId, quantity = 1, items } = body;
     await dbConnect();
     
     const user = await User.findById(session.id);
     if (!user) return NextResponse.json({ message: 'User not found' }, { status: 404 });
 
-    const product = await Product.findById(productId);
-    if (!product) return NextResponse.json({ message: 'Product not found' }, { status: 404 });
-
     // Ensure cart exists
     if (!user.cart) {
       user.cart = [];
     }
-    
-    // Improved matching logic: Ensure both are strings for comparison
-    const itemIndex = user.cart.findIndex((item: any) => 
-      String(item.product) === String(productId)
-    );
-    
-    if (itemIndex > -1) {
-      const newQuantity = user.cart[itemIndex].quantity + quantity;
-      
-      if (newQuantity > product.stock) {
-        return NextResponse.json({ 
-          message: `Cannot add more. Only ${product.stock} units in stock.` 
-        }, { status: 400 });
-      }
 
-      user.cart[itemIndex].quantity = Math.max(1, newQuantity);
-    } else {
-      if (quantity > product.stock) {
-        return NextResponse.json({ 
-          message: `Cannot add ${quantity}. Only ${product.stock} units in stock.` 
-        }, { status: 400 });
+    // Handle bulk items if provided
+    if (items && Array.isArray(items)) {
+      for (const item of items) {
+        const product = await Product.findById(item.productId);
+        if (!product) continue; // Skip missing products in bulk mode
+
+        const itemIndex = user.cart.findIndex((cItem: any) => 
+          String(cItem.product) === String(item.productId)
+        );
+
+        if (itemIndex > -1) {
+          const newQuantity = user.cart[itemIndex].quantity + (item.quantity || 1);
+          if (newQuantity <= product.stock) {
+            user.cart[itemIndex].quantity = newQuantity;
+          }
+        } else {
+          if ((item.quantity || 1) <= product.stock) {
+            user.cart.push({ product: item.productId, quantity: item.quantity || 1 });
+          }
+        }
       }
-      if (quantity > 0) {
-        user.cart.push({ product: productId, quantity });
+    } 
+    // Handle single item if provided
+    else if (productId) {
+      const product = await Product.findById(productId);
+      if (!product) return NextResponse.json({ message: 'Product not found' }, { status: 404 });
+
+      const itemIndex = user.cart.findIndex((item: any) => 
+        String(item.product) === String(productId)
+      );
+      
+      if (itemIndex > -1) {
+        const newQuantity = user.cart[itemIndex].quantity + quantity;
+        
+        if (newQuantity > product.stock) {
+          return NextResponse.json({ 
+            message: `Cannot add more. Only ${product.stock} units in stock.` 
+          }, { status: 400 });
+        }
+
+        user.cart[itemIndex].quantity = Math.max(1, newQuantity);
+      } else {
+        if (quantity > product.stock) {
+          return NextResponse.json({ 
+            message: `Cannot add ${quantity}. Only ${product.stock} units in stock.` 
+          }, { status: 400 });
+        }
+        if (quantity > 0) {
+          user.cart.push({ product: productId, quantity });
+        }
       }
     }
 

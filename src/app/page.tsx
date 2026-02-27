@@ -13,7 +13,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [maxPrice, setMaxPrice] = useState(2500);
+  const [maxPrice, setMaxPrice] = useState(5000);
   const [sortBy, setSortBy] = useState("featured");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -23,7 +23,7 @@ export default function Home() {
       const params = new URLSearchParams();
       if (selectedBrands.length > 0) params.append('brand', selectedBrands.join(','));
       if (selectedCategories.length > 0) params.append('category', selectedCategories.join(','));
-      if (maxPrice < 2500) params.append('maxPrice', maxPrice.toString());
+      if (maxPrice < 5000) params.append('maxPrice', maxPrice.toString());
       if (searchQuery) params.append('search', searchQuery);
       if (sortBy !== 'featured') params.append('sort', sortBy);
 

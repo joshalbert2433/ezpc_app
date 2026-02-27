@@ -40,3 +40,26 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     return NextResponse.json({ message: 'Failed to update order status' }, { status: 500 });
   }
 }
+
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+  const session = await getSession();
+
+  if (!session || session.role !== 'admin') {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 403 });
+  }
+
+  await dbConnect();
+
+  try {
+    const { id } = await params;
+    const order = await Order.findById(id);
+    
+    if (!order) {
+      return NextResponse.json({ message: 'Order not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(order);
+  } catch (error: any) {
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
+}

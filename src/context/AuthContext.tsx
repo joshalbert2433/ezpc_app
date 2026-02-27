@@ -17,6 +17,7 @@ interface AuthContextType {
   wishlist: any[];
   refreshUser: () => Promise<void>;
   addToCart: (productId: string, quantity?: number) => Promise<void>;
+  addMultipleToCart: (items: { productId: string, quantity: number }[]) => Promise<void>;
   removeFromCart: (productId: string) => Promise<void>;
   toggleWishlist: (productId: string) => Promise<void>;
 }
@@ -83,13 +84,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const data = await res.json();
         toast.error(data.message || 'Failed to add to cart');
       }
-    } catch (err) {
-      toast.error('Failed to add to cart');
-    }
-  };
-
-  const removeFromCart = async (productId: string) => {
-    try {
+        } catch (err) {
+          toast.error('Failed to add to cart');
+        }
+      };
+    
+      const addMultipleToCart = async (items: { productId: string, quantity: number }[]) => {
+        if (!user) {
+          toast.error('Please login to add to cart');
+          window.location.href = '/login';
+          return;
+        }
+    
+        try {
+          const res = await fetch('/api/user/cart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items })
+          });
+          if (res.ok) {
+            toast.success(`${items.length} items added to cart`);
+            await fetchUserAssets();
+          } else {
+            const data = await res.json();
+            toast.error(data.message || 'Failed to add items to cart');
+          }
+        } catch (err) {
+          toast.error('Failed to add items to cart');
+        }
+      };
+    
+      const removeFromCart = async (productId: string) => {    try {
       const res = await fetch('/api/user/cart', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
@@ -137,7 +162,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider value={{ 
       user, loading, cart, wishlist, 
-      refreshUser, addToCart, removeFromCart, toggleWishlist 
+      refreshUser, addToCart, addMultipleToCart, removeFromCart, toggleWishlist 
     }}>
       {children}
     </AuthContext.Provider>

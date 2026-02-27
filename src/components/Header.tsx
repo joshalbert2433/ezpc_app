@@ -18,9 +18,6 @@ const Header: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Don't show public header on admin routes
-  if (pathname.startsWith('/admin')) return null;
-
   const handleAuthRequired = (e: React.MouseEvent, path: string) => {
     if (!user) {
       e.preventDefault();
@@ -53,6 +50,9 @@ const Header: React.FC = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Don't show public header on admin routes or invoice pages
+  if (pathname.startsWith('/admin') || pathname.startsWith('/orders/invoice')) return null;
 
   return (
     <header className="sticky top-0 z-50 bg-[var(--background)]/90 backdrop-blur-md border-b border-(--card-border) px-6 py-4 transition-colors duration-300">

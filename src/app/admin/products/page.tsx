@@ -394,6 +394,8 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                     <option value="RAM">RAM / Memory</option>
                     <option value="SSD">SSD / Storage</option>
                     <option value="PSU">PSU / Power</option>
+                    <option value="Case">Case / Chassis</option>
+                    <option value="Cooler">Cooler / Thermal</option>
                     <option value="Monitor">Display / Unit</option>
                     <option value="Motherboard">Base / PCB</option>
                   </select>

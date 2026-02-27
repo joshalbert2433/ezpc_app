@@ -19,8 +19,8 @@ const SidebarFilter: React.FC<SidebarFiltersProps> = ({
   maxPrice, 
   setMaxPrice 
 }) => {
-  const brands = ['ASUS', 'MSI', 'Gigabyte', 'AMD', 'Intel', 'Samsung', 'Corsair'];
-  const categories = ['GPU', 'CPU', 'RAM', 'Monitor'];
+  const brands = ['ASUS', 'MSI', 'Gigabyte', 'AMD', 'Intel', 'Samsung', 'Corsair', 'NZXT', 'Lian Li', 'G.Skill'];
+  const categories = ['CPU', 'GPU', 'Motherboard', 'RAM', 'SSD', 'PSU', 'Case', 'Cooler', 'Monitor'];
 
   return (
     <aside className="w-64 flex-shrink-0 space-y-6">
@@ -78,15 +78,15 @@ const SidebarFilter: React.FC<SidebarFiltersProps> = ({
             <input 
               type="range" 
               min="100" 
-              max="2500" 
-              step="50"
+              max="5000" 
+              step="100"
               value={maxPrice}
               onChange={(e) => setMaxPrice(parseInt(e.target.value))}
               className="w-full h-1.5 bg-[var(--input)] rounded-lg appearance-none cursor-pointer accent-cyan-500" 
             />
             <div className="flex justify-between text-[10px] text-slate-500 mt-2 font-bold uppercase">
               <span>$100</span>
-              <span>$2500+</span>
+              <span>$5000+</span>
             </div>
           </div>
         </div>

@@ -4,63 +4,142 @@
     "category": "GPU", 
     "brand": "ASUS", 
     "price": 1999.99, 
+    "salePrice": 1899.99,
+    "stock": 10,
     "specs": "24GB GDDR6X • DLSS 3.5", 
-    "badge": "In Stock",
+    "badge": "sale",
     "rating": 4.9,
     "reviews": 128,
-    "description": "The ASUS ROG Strix GeForce RTX 4090 brings a whole new meaning to going with the flow."
+    "description": "The ASUS ROG Strix GeForce RTX 4090 brings a whole new meaning to going with the flow. Inside and out, every element of the card gives the monstrous GPU room to breathe freely and achieve ultimate performance.",
+    "fullSpecs": [
+      { "label": "VRAM", "value": "24GB GDDR6X" },
+      { "label": "Clock Speed", "value": "2640 MHz" },
+      { "label": "Ray Tracing", "value": "true" },
+      { "label": "DLSS 3.5", "value": "true" }
+    ]
   },
   { 
     "name": "AMD Ryzen 9 7950X3D", 
     "category": "CPU", 
     "brand": "AMD", 
     "price": 699.00, 
+    "stock": 15,
     "specs": "16 Cores • 32 Threads • 144MB Cache",
-    "badge": "Top Rated",
+    "badge": "hot",
     "rating": 4.9,
     "reviews": 245,
-    "description": "The ultimate gaming processor, featuring AMD 3D V-Cache technology."
+    "description": "The ultimate gaming processor, featuring AMD 3D V-Cache technology for massive gaming performance. This 16-core processor can do it all for the most demanding gamers and creators.",
+    "fullSpecs": [
+      { "label": "Cores", "value": "16" },
+      { "label": "Threads", "value": "32" },
+      { "label": "Base Clock", "value": "4.2 GHz" },
+      { "label": "Boost Clock", "value": "5.7 GHz" },
+      { "label": "Socket", "value": "AM5" }
+    ]
   },
   { 
-    "name": "Intel Core i9-14900K", 
-    "category": "CPU", 
-    "brand": "Intel", 
-    "price": 589.00, 
-    "specs": "24 Cores • 32 Threads • 6.0 GHz Turbo",
+    "name": "ASUS ROG Maximus Z790 Hero", 
+    "category": "Motherboard", 
+    "brand": "ASUS", 
+    "price": 629.99, 
+    "stock": 8,
+    "specs": "LGA 1700 • DDR5 • PCIe 5.0",
+    "badge": "featured",
     "rating": 4.8,
-    "reviews": 189,
-    "description": "Experience the power of the 14th Gen Intel Core i9-14900K processor."
+    "reviews": 42,
+    "description": "The ASUS ROG Maximus Z790 Hero is a powerhouse motherboard designed for enthusiasts, featuring robust power delivery and advanced cooling options.",
+    "fullSpecs": [
+      { "label": "Socket", "value": "LGA 1700" },
+      { "label": "Chipset", "value": "Z790" },
+      { "label": "Memory Support", "value": "DDR5" },
+      { "label": "WiFi 6E", "value": "true" },
+      { "label": "Thunderbolt 4", "value": "true" }
+    ]
   },
   { 
     "name": "Corsair Vengeance RGB 32GB DDR5", 
     "category": "RAM", 
     "brand": "Corsair", 
     "price": 124.99, 
+    "stock": 50,
     "specs": "32GB (2x16GB) • 6000MHz • CL30",
-    "badge": "Best Seller",
+    "badge": "sale",
     "rating": 4.7,
     "reviews": 512,
-    "description": "CORSAIR VENGEANCE RGB DDR5 memory delivers performance and style."
+    "description": "CORSAIR VENGEANCE RGB DDR5 memory delivers performance and style, with dynamic RGB lighting and high-frequency performance optimized for Intel and AMD systems.",
+    "fullSpecs": [
+      { "label": "Capacity", "value": "32GB" },
+      { "label": "Speed", "value": "6000MHz" },
+      { "label": "Latency", "value": "CL30" },
+      { "label": "RGB", "value": "true" }
+    ]
   },
   { 
-    "name": "Samsung Odyssey Neo G9", 
-    "category": "Monitor", 
+    "name": "Samsung 990 Pro 2TB", 
+    "category": "SSD", 
     "brand": "Samsung", 
-    "price": 1299.99, 
-    "specs": "49\" Curved • 240Hz • Mini-LED",
-    "badge": "Premium",
-    "rating": 4.6,
-    "reviews": 78,
-    "description": "Spellbinding visual quality and a new world of immersion."
+    "price": 169.99, 
+    "stock": 30,
+    "specs": "2TB • NVMe Gen4 • 7450 MB/s",
+    "rating": 4.9,
+    "reviews": 120,
+    "description": "Experience the ultimate SSD performance. The 990 Pro delivers near-maximum speeds of PCIe 4.0 for high-end gaming and creative workloads.",
+    "fullSpecs": [
+      { "label": "Capacity", "value": "2TB" },
+      { "label": "Interface", "value": "PCIe 4.0 x4" },
+      { "label": "Read Speed", "value": "7450 MB/s" },
+      { "label": "Write Speed", "value": "6900 MB/s" }
+    ]
   },
   { 
-    "name": "G.Skill Trident Z5 RGB 64GB", 
-    "category": "RAM", 
-    "brand": "G.Skill", 
-    "price": 219.99, 
-    "specs": "64GB (2x32GB) • 6400MHz • CL32",
+    "name": "Corsair RM1000x 1000W", 
+    "category": "PSU", 
+    "brand": "Corsair", 
+    "price": 189.99, 
+    "stock": 20,
+    "specs": "1000W • 80+ Gold • Fully Modular",
+    "rating": 4.8,
+    "reviews": 95,
+    "description": "Corsair RMx series power supplies provide high-quality components for 80 PLUS Gold efficient power and low noise operation.",
+    "fullSpecs": [
+      { "label": "Wattage", "value": "1000W" },
+      { "label": "Efficiency", "value": "80+ Gold" },
+      { "label": "Modular", "value": "true" }
+    ]
+  },
+  { 
+    "name": "Lian Li PC-O11 Dynamic EVO", 
+    "category": "Case", 
+    "brand": "Lian Li", 
+    "price": 169.99, 
+    "stock": 12,
+    "specs": "Mid Tower • Dual Chamber • Tempered Glass",
+    "badge": "hot",
     "rating": 4.9,
-    "reviews": 88,
-    "description": "Trident Z5 RGB series DDR5 memory is designed for ultra-high performance."
+    "reviews": 156,
+    "description": "The O11 Dynamic EVO is the evolution of the classic O11D, featuring a reversible design and improved airflow for the ultimate build aesthetic.",
+    "fullSpecs": [
+      { "label": "Type", "value": "Mid Tower" },
+      { "label": "Side Panel", "value": "Tempered Glass" },
+      { "label": "Motherboard Support", "value": "E-ATX, ATX, M-ATX" },
+      { "label": "USB-C", "value": "true" }
+    ]
+  },
+  { 
+    "name": "NZXT Kraken Elite 360 RGB", 
+    "category": "Cooler", 
+    "brand": "NZXT", 
+    "price": 279.99, 
+    "stock": 10,
+    "specs": "360mm AIO • LCD Display • RGB Fans",
+    "rating": 4.7,
+    "reviews": 64,
+    "description": "The Kraken Elite delivers chilling performance with a high-resolution LCD display to show off your system's stats or your favorite GIFs.",
+    "fullSpecs": [
+      { "label": "Radiator Size", "value": "360mm" },
+      { "label": "LCD Display", "value": "true" },
+      { "label": "Fan Count", "value": "3" },
+      { "label": "RGB", "value": "true" }
+    ]
   }
 ]

@@ -298,12 +298,12 @@ export default function AdminOrdersPage() {
                                     >
                                       <X size={12} /> Cancel Order
                                     </button>
-                                    <button 
-                                      className="flex items-center justify-center gap-2 py-3 bg-[var(--input)] text-[var(--muted)] rounded-xl text-[9px] font-black uppercase tracking-widest hover:text-[var(--foreground)] transition-all border border-(--card-border)"
-                                      onClick={() => toast('Registry printing coming soon...')}
+                                    <Link 
+                                      href={`/admin/orders/manifest/${order._id}`}
+                                      className="flex items-center justify-center gap-2 py-3 bg-[var(--input)] text-[var(--muted)] rounded-xl text-[9px] font-black uppercase tracking-widest hover:text-[var(--primary)] transition-all border border-(--card-border)"
                                     >
                                       <ExternalLink size={12} /> Export Manifest
-                                    </button>
+                                    </Link>
                                   </div>
                                 </div>
                               </div>

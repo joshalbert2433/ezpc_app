@@ -4,7 +4,9 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
-import { Package, Truck, Calendar, DollarSign, MapPin, ChevronLeft } from 'lucide-react';
+import { Package, Truck, Calendar, DollarSign, MapPin, ChevronLeft, Download, FileText } from 'lucide-react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface OrderItem {
   productId: string;
@@ -66,6 +68,75 @@ export default function OrdersPage() {
     }
   };
 
+  const generateInvoice = (order: Order) => {
+    const doc = new jsPDF() as any;
+    const orderId = order._id.slice(-6).toUpperCase();
+
+    // Add Logo/Header
+    doc.setFontSize(22);
+    doc.setTextColor(34, 211, 238); // Cyan primary color
+    doc.setFont('helvetica', 'bold');
+    doc.text('EZPC_ INVOICE', 105, 20, { align: 'center' });
+
+    // Reset color for other text
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Order ID: #${orderId}`, 20, 40);
+    doc.text(`Date: ${new Date(order.createdAt).toLocaleDateString()}`, 20, 45);
+    doc.text(`Status: ${order.status.toUpperCase()}`, 20, 50);
+
+    // Shipping Info
+    doc.setFont('helvetica', 'bold');
+    doc.text('SHIPPING ADDRESS:', 20, 65);
+    doc.setFont('helvetica', 'normal');
+    const addr = order.shippingAddress;
+    let yPos = 70;
+    doc.text(addr.fullName, 20, yPos);
+    yPos += 5;
+    doc.text(addr.phone, 20, yPos);
+    yPos += 5;
+    if (addr.houseUnit || addr.building) {
+        doc.text(`${addr.houseUnit || ''} ${addr.building || ''}`.trim(), 20, yPos);
+        yPos += 5;
+    }
+    doc.text(addr.street, 20, yPos);
+    yPos += 5;
+    doc.text(`${addr.city}, ${addr.state} ${addr.zipCode}`, 20, yPos);
+
+    // Items Table
+    const tableColumn = ["Product", "Price", "Quantity", "Total"];
+    const tableRows = order.items.map(item => [
+      item.name,
+      `$${item.price.toLocaleString()}`,
+      item.quantity.toString(),
+      `$${(item.price * item.quantity).toLocaleString()}`
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: yPos + 15,
+      headStyles: { fillColor: [34, 211, 238], textColor: [0, 0, 0] },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+      margin: { top: 20 },
+    });
+
+    // Final Total
+    const finalY = (doc as any).lastAutoTable.finalY + 10;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text(`GRAND TOTAL: $${order.totalAmount.toLocaleString()}`, 190, finalY, { align: 'right' });
+
+    // Footer
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'italic');
+    doc.text('Thank you for choosing EZPC for your high-performance hardware.', 105, 280, { align: 'center' });
+
+    doc.save(`EZPC_Invoice_${orderId}.pdf`);
+    toast.success('Invoice downloaded!');
+  };
+
   if (authLoading || loading) {
     return (
       <div className="max-w-7xl mx-auto px-6 py-20 text-center flex flex-col items-center justify-center space-y-4">
@@ -113,7 +184,16 @@ export default function OrdersPage() {
           {orders.map((order) => (
             <div key={order._id} className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-8 shadow-xl">
               <div className="flex justify-between items-center border-b border-(--card-border) pb-4 mb-4">
-                <h2 className="text-xl font-black text-[var(--foreground)]">Order #{order._id.slice(-6).toUpperCase()}</h2>
+                <div className="flex items-center gap-4">
+                  <h2 className="text-xl font-black text-[var(--foreground)]">Order #{order._id.slice(-6).toUpperCase()}</h2>
+                  <Link 
+                    href={`/orders/invoice/${order._id}`}
+                    className="flex items-center gap-2 text-[10px] font-black text-[var(--primary)] hover:opacity-80 uppercase tracking-widest transition-all bg-[var(--primary)]/5 px-3 py-1.5 rounded-lg border border-[var(--primary)]/10"
+                    title="View & Export Invoice"
+                  >
+                    <FileText size={14} /> View Invoice
+                  </Link>
+                </div>
                 <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
                   order.status === 'delivered' ? 'bg-green-500/10 text-green-500' :
                   order.status === 'shipped' ? 'bg-blue-500/10 text-blue-500' :
