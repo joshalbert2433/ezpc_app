@@ -18,6 +18,9 @@ if (!cached) {
 }
 
 async function dbConnect() {
+  // Override DNS to Google to fix ECONNREFUSED for MongoDB SRV records
+  require('dns').setServers(['8.8.8.8']);
+
   if (cached.conn) {
     return cached.conn;
   }

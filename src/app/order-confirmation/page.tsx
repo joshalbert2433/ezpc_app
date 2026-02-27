@@ -79,7 +79,7 @@ export default function OrderConfirmationPage() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-6 py-12 text-center transition-colors duration-300">
-      <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-10 max-w-md w-full shadow-xl space-y-6">
+      <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-10 max-w-md w-full shadow-xl space-y-6">
         {orderStatus === 'loading' && (
           <>
             <Loader2 size={64} className="text-[var(--primary)] mx-auto animate-spin" />
@@ -102,7 +102,7 @@ export default function OrderConfirmationPage() {
           </>
         )}
         
-        <div className="flex flex-col gap-4 pt-6 border-t border-[var(--card-border)]">
+        <div className="flex flex-col gap-4 pt-6 border-t border-(--card-border)">
           <Link href="/" className="bg-[var(--primary)] hover:opacity-90 text-white dark:text-black px-8 py-3 rounded-xl font-black flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg uppercase tracking-widest text-sm">
             <Home size={18} /> Continue Shopping
           </Link>

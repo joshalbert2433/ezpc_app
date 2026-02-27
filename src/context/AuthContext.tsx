@@ -52,8 +52,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchUserAssets = async () => {
     try {
       const [cartRes, wishlistRes] = await Promise.all([
-        fetch('/api/user/cart'),
-        fetch('/api/user/wishlist')
+        fetch('/api/user/cart', { cache: 'no-store' }),
+        fetch('/api/user/wishlist', { cache: 'no-store' })
       ]);
       
       if (cartRes.ok) setCart(await cartRes.json());
@@ -79,6 +79,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.ok) {
         toast.success('Added to cart');
         await fetchUserAssets();
+      } else {
+        const data = await res.json();
+        toast.error(data.message || 'Failed to add to cart');
       }
     } catch (err) {
       toast.error('Failed to add to cart');
@@ -95,6 +98,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.ok) {
         toast.success('Item removed from cart');
         await fetchUserAssets();
+      } else {
+        const data = await res.json();
+        toast.error(data.message || 'Failed to remove item');
       }
     } catch (err) {
       toast.error('Failed to remove item');

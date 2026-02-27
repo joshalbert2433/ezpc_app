@@ -31,7 +31,7 @@ export default function WishlistPage() {
       </div>
 
       {!user ? (
-        <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-20 text-center shadow-sm">
+        <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-20 text-center shadow-sm">
           <Heart size={48} className="mx-auto text-[var(--card-border)] mb-6" />
           <h2 className="text-2xl font-black text-[var(--foreground)] mb-4">Identity Verification Required</h2>
           <p className="text-[var(--muted)] max-w-md mx-auto mb-8">Please sign in to view and manage your saved products.</p>
@@ -40,7 +40,7 @@ export default function WishlistPage() {
           </Link>
         </div>
       ) : wishlist.length === 0 ? (
-        <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-20 text-center shadow-sm">
+        <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-20 text-center shadow-sm">
           <Heart size={48} className="mx-auto text-[var(--card-border)] mb-6" />
           <h2 className="text-2xl font-black text-[var(--foreground)] mb-4">Wishlist is Empty</h2>
           <p className="text-[var(--muted)] max-w-md mx-auto mb-8">You haven't saved any products yet. Start exploring the catalog to build your list.</p>
@@ -58,13 +58,13 @@ export default function WishlistPage() {
                 <div className="flex gap-2">
                   <button 
                     onClick={() => addToCart(pid)}
-                    className="flex-1 flex items-center justify-center gap-2 bg-[var(--input)] hover:bg-[var(--primary)] text-[var(--foreground)] hover:text-white dark:hover:text-black py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all border border-[var(--card-border)]"
+                    className="flex-1 flex items-center justify-center gap-2 bg-[var(--input)] hover:bg-[var(--primary)] text-[var(--foreground)] hover:text-white dark:hover:text-black py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all border border-(--card-border)"
                   >
                     <Plus size={14} /> Add to Cart
                   </button>
                   <button 
                     onClick={() => toggleWishlist(pid)}
-                    className="p-3 bg-[var(--input)] hover:bg-red-500/10 text-[var(--muted)] hover:text-red-500 rounded-xl transition-all border border-[var(--card-border)]"
+                    className="p-3 bg-[var(--input)] hover:bg-red-500/10 text-[var(--muted)] hover:text-red-500 rounded-xl transition-all border border-(--card-border)"
                     title="Remove from wishlist"
                   >
                     <Trash2 size={18} />

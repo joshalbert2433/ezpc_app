@@ -108,7 +108,7 @@ export default function AddressesPage() {
       <div className="grid grid-cols-1 gap-6">
         <button 
           onClick={() => { setEditingAddress(null); setIsModalOpen(true); }}
-          className="group border-2 border-dashed border-[var(--card-border)] hover:border-[var(--primary)]/50 rounded-3xl p-8 transition-all flex flex-col items-center justify-center gap-4 bg-[var(--card)]/30 hover:bg-[var(--primary)]/5 shadow-sm"
+          className="group border-2 border-dashed border-(--card-border) hover:border-[var(--primary)]/50 rounded-3xl p-8 transition-all flex flex-col items-center justify-center gap-4 bg-[var(--card)]/30 hover:bg-[var(--primary)]/5 shadow-sm"
         >
           <div className="w-12 h-12 rounded-2xl bg-[var(--input)] flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--primary)] group-hover:scale-110 transition-all">
             <Plus size={24} />
@@ -119,7 +119,7 @@ export default function AddressesPage() {
         {addresses.map((addr) => (
           <div 
             key={addr._id} 
-            className={`relative bg-[var(--card)] border rounded-3xl p-8 transition-all shadow-sm flex flex-col md:flex-row md:items-center gap-8 ${addr.isDefault ? 'border-[var(--primary)] shadow-[0_0_20px_rgba(34,211,238,0.1)]' : 'border-[var(--card-border)] hover:border-[var(--muted)]'}`}
+            className={`relative bg-[var(--card)] border rounded-3xl p-8 transition-all shadow-sm flex flex-col md:flex-row md:items-center gap-8 ${addr.isDefault ? 'border-[var(--primary)] shadow-[0_0_20px_rgba(34,211,238,0.1)]' : 'border-(--card-border) hover:border-[var(--muted)]'}`}
           >
             {addr.isDefault && (
               <div className="absolute top-4 right-8 flex items-center gap-1.5 bg-[var(--primary)] text-white dark:text-black text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">
@@ -150,7 +150,7 @@ export default function AddressesPage() {
               {!addr.isDefault && (
                 <button 
                   onClick={() => handleSetDefault(addr._id)}
-                  className="px-4 py-2.5 rounded-xl bg-[var(--input)] text-[var(--muted)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/10 text-[10px] font-black uppercase transition-all border border-[var(--card-border)]"
+                  className="px-4 py-2.5 rounded-xl bg-[var(--input)] text-[var(--muted)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/10 text-[10px] font-black uppercase transition-all border border-(--card-border)"
                 >
                   Set Primary
                 </button>
@@ -158,13 +158,13 @@ export default function AddressesPage() {
               <div className="flex gap-2">
                 <button 
                   onClick={() => { setEditingAddress(addr); setIsModalOpen(true); }}
-                  className="p-3 rounded-xl bg-[var(--input)] text-[var(--muted)] hover:text-[var(--primary)] border border-[var(--card-border)] transition-all"
+                  className="p-3 rounded-xl bg-[var(--input)] text-[var(--muted)] hover:text-[var(--primary)] border border-(--card-border) transition-all"
                 >
                   <Edit2 size={16} />
                 </button>
                 <button 
                   onClick={() => handleDelete(addr._id)}
-                  className="p-3 rounded-xl bg-[var(--input)] text-[var(--muted)] hover:text-red-500 border border-[var(--card-border)] transition-all"
+                  className="p-3 rounded-xl bg-[var(--input)] text-[var(--muted)] hover:text-red-500 border border-(--card-border) transition-all"
                 >
                   <Trash2 size={16} />
                 </button>
@@ -239,8 +239,8 @@ function AddressModal({ address, onClose, onSuccess }: any) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="bg-[var(--card)] border border-[var(--card-border)] w-full max-w-xl rounded-3xl overflow-hidden shadow-2xl transition-colors duration-300 max-h-[95vh] flex flex-col">
-        <div className="flex items-center justify-between p-6 border-b border-[var(--card-border)] bg-[var(--input)]/30 shrink-0">
+      <div className="bg-[var(--card)] border border-(--card-border) w-full max-w-xl rounded-3xl overflow-hidden shadow-2xl transition-colors duration-300 max-h-[95vh] flex flex-col">
+        <div className="flex items-center justify-between p-6 border-b border-(--card-border) bg-[var(--input)]/30 shrink-0">
           <h2 className="text-xl font-black text-[var(--foreground)] uppercase tracking-tighter flex items-center gap-2">
             <MapPin className="text-[var(--primary)]" size={20} />
             {address ? 'Edit Coordinate' : 'Initialize Coordinate'}
@@ -251,7 +251,7 @@ function AddressModal({ address, onClose, onSuccess }: any) {
         </div>
         
         <form onSubmit={handleSubmit} className="p-8 space-y-6 overflow-y-auto custom-scrollbar">
-          <div className="flex justify-between items-center bg-[var(--input)] p-4 rounded-2xl border border-[var(--card-border)] mb-2">
+          <div className="flex justify-between items-center bg-[var(--input)] p-4 rounded-2xl border border-(--card-border) mb-2">
             <div className="flex items-center gap-3">
               <Navigation className="text-[var(--primary)]" size={20} />
               <div>
@@ -286,7 +286,7 @@ function AddressModal({ address, onClose, onSuccess }: any) {
                     className={`py-2.5 rounded-xl border text-[10px] font-black uppercase transition-all ${
                       formData.label === l 
                         ? 'bg-[var(--primary)] border-[var(--primary)] text-white dark:text-black shadow-lg shadow-[var(--primary)]/20' 
-                        : 'bg-[var(--input)] border-[var(--card-border)] text-[var(--muted)] hover:border-[var(--muted)]'
+                        : 'bg-[var(--input)] border-(--card-border) text-[var(--muted)] hover:border-[var(--muted)]'
                     }`}
                   >
                     {l}
@@ -299,7 +299,7 @@ function AddressModal({ address, onClose, onSuccess }: any) {
               <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Building / Tower</label>
               <div className="relative">
                 <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={14} />
-                <input placeholder="e.g. Cyber Tower" className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-xl pl-10 pr-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
+                <input placeholder="e.g. Cyber Tower" className="w-full bg-[var(--input)] border border-(--card-border) rounded-xl pl-10 pr-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
                   value={formData.building} onChange={e => setFormData({...formData, building: e.target.value})} />
               </div>
             </div>
@@ -308,58 +308,58 @@ function AddressModal({ address, onClose, onSuccess }: any) {
               <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">House / Unit No.</label>
               <div className="relative">
                 <HomeIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={14} />
-                <input placeholder="e.g. Unit 1203" className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-xl pl-10 pr-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
+                <input placeholder="e.g. Unit 1203" className="w-full bg-[var(--input)] border border-(--card-border) rounded-xl pl-10 pr-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
                   value={formData.houseUnit} onChange={e => setFormData({...formData, houseUnit: e.target.value})} />
               </div>
             </div>
 
             <div className="col-span-full">
               <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Recipient Name</label>
-              <input required className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-xl px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
+              <input required className="w-full bg-[var(--input)] border border-(--card-border) rounded-xl px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
                 value={formData.fullName} onChange={e => setFormData({...formData, fullName: e.target.value})} />
             </div>
 
             <div className="col-span-full">
               <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Comms Number (Phone)</label>
-              <input required className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-xl px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
+              <input required className="w-full bg-[var(--input)] border border-(--card-border) rounded-xl px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
                 value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
             </div>
 
             <div className="col-span-full">
               <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Street Address</label>
-              <input required className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-xl px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
+              <input required className="w-full bg-[var(--input)] border border-(--card-border) rounded-xl px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
                 value={formData.street} onChange={e => setFormData({...formData, street: e.target.value})} />
             </div>
 
             <div>
               <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">City Unit</label>
-              <input required className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-xl px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
+              <input required className="w-full bg-[var(--input)] border border-(--card-border) rounded-xl px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
                 value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} />
             </div>
 
             <div>
               <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">State / Province</label>
-              <input required className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-xl px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
+              <input required className="w-full bg-[var(--input)] border border-(--card-border) rounded-xl px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
                 value={formData.state} onChange={e => setFormData({...formData, state: e.target.value})} />
             </div>
 
             <div className="col-span-full">
               <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-widest mb-2">Zip Code</label>
-              <input required className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-xl px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
+              <input required className="w-full bg-[var(--input)] border border-(--card-border) rounded-xl px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none font-bold text-sm" 
                 value={formData.zipCode} onChange={e => setFormData({...formData, zipCode: e.target.value})} />
             </div>
           </div>
 
           <label className="flex items-center gap-3 cursor-pointer group">
             <input type="checkbox" className="hidden" checked={formData.isDefault} onChange={e => setFormData({...formData, isDefault: e.target.checked})} />
-            <div className={`w-5 h-5 border rounded-lg flex items-center justify-center transition-all ${formData.isDefault ? 'bg-[var(--primary)] border-[var(--primary)]' : 'border-[var(--card-border)] bg-[var(--input)] group-hover:border-[var(--muted)]'}`}>
+            <div className={`w-5 h-5 border rounded-lg flex items-center justify-center transition-all ${formData.isDefault ? 'bg-[var(--primary)] border-[var(--primary)]' : 'border-(--card-border) bg-[var(--input)] group-hover:border-[var(--muted)]'}`}>
               {formData.isDefault && <Check size={14} className="text-white dark:text-black" />}
             </div>
             <span className="text-[10px] font-black text-[var(--muted)] uppercase tracking-widest group-hover:text-[var(--foreground)] transition-colors">Set as Primary Logistics Point</span>
           </label>
 
-          <div className="flex gap-4 pt-4 border-t border-[var(--card-border)]">
-            <button type="button" onClick={onClose} className="px-6 py-4 rounded-2xl bg-[var(--input)] text-[var(--muted)] font-black uppercase text-[10px] tracking-widest hover:bg-[var(--card-border)] transition-all border border-[var(--card-border)]">Cancel</button>
+          <div className="flex gap-4 pt-4 border-t border-(--card-border)">
+            <button type="button" onClick={onClose} className="px-6 py-4 rounded-2xl bg-[var(--input)] text-[var(--muted)] font-black uppercase text-[10px] tracking-widest hover:bg-[var(--card-border)] transition-all border border-(--card-border)">Cancel</button>
             <button type="submit" disabled={loading} className="flex-1 bg-[var(--primary)] hover:opacity-90 text-white dark:text-black font-black py-4 rounded-2xl transition-all disabled:opacity-50 shadow-xl shadow-[var(--primary)]/20 uppercase text-[10px] tracking-[0.2em]">
               {loading ? 'Transmitting...' : address ? 'Overwrite Data' : 'Execute Creation'}
             </button>

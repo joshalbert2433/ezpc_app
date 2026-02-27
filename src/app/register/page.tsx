@@ -55,7 +55,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex min-h-[calc(100vh-80px)] items-center justify-center px-4 py-12 transition-colors duration-300">
-      <div className="w-full max-w-md space-y-8 bg-[var(--card)] p-10 rounded-3xl border border-[var(--card-border)] shadow-2xl backdrop-blur-sm">
+      <div className="w-full max-w-md space-y-8 bg-[var(--card)] p-10 rounded-3xl border border-(--card-border) shadow-2xl backdrop-blur-sm">
         <div>
           <h2 className="mt-6 text-center text-3xl font-black tracking-tight text-[var(--foreground)] uppercase">
             Sign Up<span className="text-[var(--primary)]">_</span>
@@ -72,7 +72,7 @@ export default function RegisterPage() {
                 {...register('name')}
                 type="text"
                 className={`block w-full bg-[var(--input)] border ${
-                  errors.name ? 'border-red-500' : 'border-[var(--card-border)]'
+                  errors.name ? 'border-red-500' : 'border-(--card-border)'
                 } rounded-xl py-3 px-4 text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--primary)] transition-all`}
                 placeholder="John Doe"
               />
@@ -86,7 +86,7 @@ export default function RegisterPage() {
                 {...register('email')}
                 type="email"
                 className={`block w-full bg-[var(--input)] border ${
-                  errors.email ? 'border-red-500' : 'border-[var(--card-border)]'
+                  errors.email ? 'border-red-500' : 'border-(--card-border)'
                 } rounded-xl py-3 px-4 text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--primary)] transition-all`}
                 placeholder="name@example.com"
               />
@@ -100,7 +100,7 @@ export default function RegisterPage() {
                 {...register('password')}
                 type="password"
                 className={`block w-full bg-[var(--input)] border ${
-                  errors.password ? 'border-red-500' : 'border-[var(--card-border)]'
+                  errors.password ? 'border-red-500' : 'border-(--card-border)'
                 } rounded-xl py-3 px-4 text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--primary)] transition-all`}
                 placeholder="••••••••"
               />

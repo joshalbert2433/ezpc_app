@@ -91,13 +91,13 @@ export default function CheckoutPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Order Details & Shipping */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-8 shadow-xl">
+          <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-8 shadow-xl">
             <h2 className="text-xl font-black text-[var(--foreground)] mb-6 uppercase tracking-widest flex items-center gap-3">
               <Package size={24} className="text-[var(--primary)]" /> Your Items
             </h2>
             <div className="space-y-4">
               {filteredCart.map((item: any) => ( // Use filteredCart
-                <div key={item.product?._id} className="flex justify-between items-center text-sm border-b border-[var(--card-border)] pb-2">
+                <div key={item.product?._id} className="flex justify-between items-center text-sm border-b border-(--card-border) pb-2">
                   <div className="flex items-center gap-3">
                     {item.product?.images && item.product.images.length > 0 ? (
                       <img src={item.product.images[0]} alt={item.product.name} className="w-10 h-10 object-cover rounded-md" />
@@ -115,7 +115,7 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-8 shadow-xl">
+          <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-8 shadow-xl">
             <h2 className="text-xl font-black text-[var(--foreground)] mb-6 uppercase tracking-widest flex items-center gap-3">
               <MapPin size={24} className="text-[var(--primary)]" /> Shipping Address
             </h2>
@@ -132,7 +132,7 @@ export default function CheckoutPage() {
                 </Link>
               </div>
             ) : (
-              <div className="text-center p-8 bg-[var(--input)] rounded-2xl border border-[var(--card-border)]">
+              <div className="text-center p-8 bg-[var(--input)] rounded-2xl border border-(--card-border)">
                 <p className="text-[var(--muted)] mb-4">No default shipping address selected.</p>
                 <Link href="/addresses" className="bg-[var(--primary)] hover:opacity-90 text-white dark:text-black px-6 py-2 rounded-xl text-sm font-bold transition-all">
                   Add/Select Address
@@ -144,7 +144,7 @@ export default function CheckoutPage() {
 
         {/* Order Summary & Payment Selection */}
         <div className="space-y-6">
-          <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-8 shadow-xl sticky top-32">
+          <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-8 shadow-xl sticky top-32">
             <h2 className="text-xl font-black text-[var(--foreground)] mb-6 uppercase tracking-widest">Order Summary</h2>
             
             <div className="space-y-4 mb-8">
@@ -160,7 +160,7 @@ export default function CheckoutPage() {
                 <span className="text-[var(--muted)] font-bold">Shipping</span>
                 <span className="text-green-500 font-black uppercase">Free</span>
               </div>
-              <div className="border-t border-[var(--card-border)] pt-4 mt-4 flex justify-between">
+              <div className="border-t border-(--card-border) pt-4 mt-4 flex justify-between">
                 <span className="text-[var(--foreground)] font-black uppercase tracking-widest">Total</span>
                 <span className="text-2xl font-black text-[var(--primary)] drop-shadow-sm">${total.toLocaleString()}</span>
               </div>
@@ -168,7 +168,7 @@ export default function CheckoutPage() {
 
             <h3 className="text-lg font-black text-[var(--foreground)] mb-4 uppercase tracking-widest">Choose Payment Method</h3>
             <div className="space-y-3 mb-6">
-              <label className="flex items-center gap-3 bg-[var(--input)] border border-[var(--card-border)] rounded-xl p-4 cursor-pointer">
+              <label className="flex items-center gap-3 bg-[var(--input)] border border-(--card-border) rounded-xl p-4 cursor-pointer">
                 <input 
                   type="radio" 
                   name="paymentMethod" 
@@ -180,7 +180,7 @@ export default function CheckoutPage() {
                 <CreditCard size={20} className="text-[var(--primary)]" />
                 <span className="font-bold text-[var(--foreground)]">PayPal</span>
               </label>
-              <label className="flex items-center gap-3 bg-[var(--input)] border border-[var(--card-border)] rounded-xl p-4 cursor-pointer">
+              <label className="flex items-center gap-3 bg-[var(--input)] border border-(--card-border) rounded-xl p-4 cursor-pointer">
                 <input 
                   type="radio" 
                   name="paymentMethod" 
@@ -192,7 +192,7 @@ export default function CheckoutPage() {
                 <DollarSign size={20} className="text-green-500" />
                 <span className="font-bold text-[var(--foreground)]">Cash on Delivery (COD)</span>
               </label>
-              <label className="flex items-center gap-3 bg-[var(--input)] border border-[var(--card-border)] rounded-xl p-4 cursor-pointer">
+              <label className="flex items-center gap-3 bg-[var(--input)] border border-(--card-border) rounded-xl p-4 cursor-pointer">
                 <input 
                   type="radio" 
                   name="paymentMethod" 

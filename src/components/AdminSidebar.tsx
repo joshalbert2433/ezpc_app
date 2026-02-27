@@ -31,7 +31,7 @@ export default function AdminSidebar() {
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-[var(--card)] border-r border-[var(--card-border)] flex flex-col z-50 transition-colors duration-300">
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-[var(--card)] border-r border-(--card-border) flex flex-col z-50 transition-colors duration-300">
       <div className="p-8">
         <Link href="/" className="text-2xl font-black tracking-tighter text-[var(--primary)] hover:opacity-80 transition-opacity flex items-center gap-2">
           EZPC_ <span className="text-[10px] bg-[var(--primary)]/10 text-[var(--primary)] px-1.5 py-0.5 rounded border border-[var(--primary)]/20">ADMIN</span>
@@ -61,7 +61,7 @@ export default function AdminSidebar() {
         })}
       </nav>
 
-      <div className="p-4 mt-auto border-t border-[var(--card-border)]">
+      <div className="p-4 mt-auto border-t border-(--card-border)">
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-500/5 rounded-xl transition-all font-bold"

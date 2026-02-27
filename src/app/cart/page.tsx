@@ -4,15 +4,28 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ShoppingCart, Trash2, ArrowLeft, Plus, Minus, Package, ShieldCheck, Square, CheckSquare } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export default function CartPage() {
   const { cart, loading, user, addToCart, removeFromCart } = useAuth();
   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
+  const router = useRouter();
+
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    // Select all items by default when cart loads or changes
-    setSelectedItemIds(cart.map(item => item.product?._id || '').filter(Boolean));
-  }, [cart]);
+    // Select all items by default only on first load
+    if (!isInitialized && cart.length > 0) {
+      setSelectedItemIds(cart.map(item => item.product?._id || '').filter(Boolean));
+      setIsInitialized(true);
+    }
+  }, [cart, isInitialized]);
+
+  const handleRemoveItem = async (productId: string) => {
+    await removeFromCart(productId);
+    // Remove from selection if it was selected
+    setSelectedItemIds(prev => prev.filter(id => id !== productId));
+  };
 
   const handleCheckboxChange = (productId: string, isChecked: boolean) => {
     setSelectedItemIds(prev => 
@@ -24,11 +37,18 @@ export default function CartPage() {
     setSelectedItemIds(isChecked ? cart.map(item => item.product?._id || '').filter(Boolean) : []);
   };
 
-  const selectedItems = cart.filter(item => selectedItemIds.includes(item.product?._id || ''));
+  const selectedItems = cart.filter(item => item.product && selectedItemIds.includes(item.product._id));
 
-  const subtotal = selectedItems.reduce((acc, curr) => acc + (curr.product?.price * curr.quantity), 0);
+  const subtotal = selectedItems.reduce((acc, curr) => acc + ((curr.product?.price || 0) * curr.quantity), 0);
   const tax = subtotal * 0.05; // 5% example tax
   const total = subtotal + tax;
+
+  const goToProduct = (product_id : number) => {
+    console.log(product_id)
+    router.push(`product/${product_id}`)
+  }
+
+  console.log(cart)
 
   if (loading) {
     return (
@@ -52,7 +72,7 @@ export default function CartPage() {
       </div>
 
       {!user ? (
-        <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-20 text-center shadow-sm">
+        <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-20 text-center shadow-sm">
           <ShoppingCart size={48} className="mx-auto text-[var(--card-border)] mb-6" />
           <h2 className="text-2xl font-black text-[var(--foreground)] mb-4">Login Required</h2>
           <p className="text-[var(--muted)] max-w-md mx-auto mb-8">Please sign in to view and manage your shopping cart.</p>
@@ -61,7 +81,7 @@ export default function CartPage() {
           </Link>
         </div>
       ) : cart.length === 0 ? (
-        <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-20 text-center shadow-sm">
+        <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-20 text-center shadow-sm">
           <ShoppingCart size={48} className="mx-auto text-[var(--card-border)] mb-6" />
           <h2 className="text-2xl font-black text-[var(--foreground)] mb-4">Your Cart is Empty</h2>
           <p className="text-[var(--muted)] max-w-md mx-auto mb-8">You haven't added any products to your cart yet.</p>
@@ -73,7 +93,7 @@ export default function CartPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-2xl p-4 flex items-center justify-between shadow-sm">
+            <div className="bg-[var(--card)] border border-(--card-border) rounded-2xl p-4 flex items-center justify-between shadow-sm">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input 
                   type="checkbox"
@@ -94,14 +114,14 @@ export default function CartPage() {
             </div>
 
             {cart.map((item) => (
-              <div key={item.product?._id} className="bg-[var(--card)] border border-[var(--card-border)] rounded-2xl p-6 flex gap-4 hover:border-[var(--primary)]/30 transition-all group shadow-sm">
+              <div key={item.product?._id} className="bg-[var(--card)] border border-(--card-border) rounded-2xl p-6 flex gap-4 hover:border-[var(--primary)]/30 transition-all group shadow-sm">
                 <input 
                   type="checkbox"
                   className="form-checkbox text-[var(--primary)] h-5 w-5 rounded focus:ring-[var(--primary)] mt-0.5"
                   checked={selectedItemIds.includes(item.product?._id || '')}
                   onChange={(e) => handleCheckboxChange(item.product?._id || '', e.target.checked)}
                 />
-                <div className="w-24 h-24 bg-[var(--input)] rounded-xl overflow-hidden flex-shrink-0 border border-[var(--card-border)]">
+                <div className="w-24 h-24 bg-[var(--input)] rounded-xl overflow-hidden flex-shrink-0 border border-(--card-border)">
                   {item.product?.images && item.product.images.length > 0 ? (
                     <img src={item.product.images[0]} alt={item.product.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
                   ) : (
@@ -112,11 +132,11 @@ export default function CartPage() {
                 <div className="flex-1 flex flex-col justify-between">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="text-lg font-black text-[var(--foreground)] group-hover:text-[var(--primary)] transition-colors">{item.product?.name}</h3>
+                      <h3 className="text-lg font-black text-[var(--foreground)] group-hover:text-[var(--primary)] transition-colors hover:underline cursor-pointer" onClick={() => goToProduct(item.product?._id)}>{item.product?.name}</h3>
                       <p className="text-xs text-[var(--muted)] font-bold uppercase tracking-wider mt-1">{item.product?.category} • {item.product?.brand}</p>
                     </div>
                     <button 
-                      onClick={() => removeFromCart(item.product?._id)}
+                      onClick={() => handleRemoveItem(item.product?._id)}
                       className="p-2 text-[var(--muted)] hover:text-red-400 transition-colors"
                     >
                       <Trash2 size={18} />
@@ -124,7 +144,7 @@ export default function CartPage() {
                   </div>
 
                   <div className="flex justify-between items-end mt-4">
-                    <div className="flex items-center gap-4 bg-[var(--input)] border border-[var(--card-border)] rounded-lg px-3 py-1">
+                    <div className="flex items-center gap-4 bg-[var(--input)] border border-(--card-border) rounded-lg px-3 py-1">
                       <button 
                         onClick={() => addToCart(item.product?._id, -1)}
                         disabled={item.quantity <= 1}
@@ -140,7 +160,7 @@ export default function CartPage() {
                         <Plus size={14} />
                       </button>
                     </div>
-                    <p className="text-lg font-black text-[var(--primary)]">${(item.product?.price * item.quantity).toLocaleString()}</p>
+                    <p className="text-lg font-black text-[var(--primary)]">${((item.product?.price || 0) * item.quantity).toLocaleString()}</p>
                   </div>
                 </div>
               </div>
@@ -149,7 +169,7 @@ export default function CartPage() {
 
           {/* Summary Sidebar */}
           <div className="space-y-6">
-            <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-8 shadow-xl sticky top-32">
+            <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-8 shadow-xl sticky top-32">
               <h2 className="text-xl font-black text-[var(--foreground)] mb-6 uppercase tracking-widest">Order Summary</h2>
               
               <div className="space-y-4 mb-8">
@@ -165,7 +185,7 @@ export default function CartPage() {
                   <span className="text-[var(--muted)] font-bold">Shipping</span>
                   <span className="text-green-500 font-black uppercase">Free</span>
                 </div>
-                <div className="border-t border-[var(--card-border)] pt-4 mt-4 flex justify-between">
+                <div className="border-t border-(--card-border) pt-4 mt-4 flex justify-between">
                   <span className="text-[var(--foreground)] font-black uppercase tracking-widest">Total</span>
                   <span className="text-2xl font-black text-[var(--primary)] drop-shadow-sm">${total.toLocaleString()}</span>
                 </div>

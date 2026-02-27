@@ -24,7 +24,7 @@ const SidebarFilter: React.FC<SidebarFiltersProps> = ({
 
   return (
     <aside className="w-64 flex-shrink-0 space-y-6">
-      <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-5 sticky top-28 shadow-sm dark:shadow-none">
+      <div className="bg-[var(--card)] border border-(--card-border) rounded-xl p-5 sticky top-28 shadow-sm dark:shadow-none">
         <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--primary)] mb-4 flex items-center gap-2">
           <Filter className="w-3 h-3" /> Filters
         </h3>
@@ -42,7 +42,7 @@ const SidebarFilter: React.FC<SidebarFiltersProps> = ({
                     checked={selectedCategories.includes(cat)}
                     onChange={() => toggleCategory(cat)}
                   />
-                  <div className={`w-4 h-4 border rounded flex items-center justify-center transition-all ${selectedCategories.includes(cat) ? 'bg-cyan-500 border-cyan-500' : 'border-[var(--card-border)] bg-[var(--input)] group-hover:border-slate-400'}`}>
+                  <div className={`w-4 h-4 border rounded flex items-center justify-center transition-all ${selectedCategories.includes(cat) ? 'bg-cyan-500 border-cyan-500' : 'border-(--card-border) bg-[var(--input)] group-hover:border-slate-400'}`}>
                     {selectedCategories.includes(cat) && <CheckCircle2 className="w-3 h-3 text-black" />}
                   </div>
                   <span className={`text-sm transition-colors ${selectedCategories.includes(cat) ? 'text-[var(--foreground)] font-medium' : 'text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300'}`}>{cat}</span>
@@ -63,7 +63,7 @@ const SidebarFilter: React.FC<SidebarFiltersProps> = ({
                     checked={selectedBrands.includes(brand)}
                     onChange={() => toggleBrand(brand)}
                   />
-                  <div className={`w-4 h-4 border rounded flex items-center justify-center transition-all ${selectedBrands.includes(brand) ? 'bg-cyan-500 border-cyan-500' : 'border-[var(--card-border)] bg-[var(--input)] group-hover:border-slate-400'}`}>
+                  <div className={`w-4 h-4 border rounded flex items-center justify-center transition-all ${selectedBrands.includes(brand) ? 'bg-cyan-500 border-cyan-500' : 'border-(--card-border) bg-[var(--input)] group-hover:border-slate-400'}`}>
                     {selectedBrands.includes(brand) && <CheckCircle2 className="w-3 h-3 text-black" />}
                   </div>
                   <span className={`text-sm transition-colors ${selectedBrands.includes(brand) ? 'text-[var(--foreground)] font-medium' : 'text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300'}`}>{brand}</span>

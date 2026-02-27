@@ -64,8 +64,40 @@ export default function PaymentPage() {
   const tax = subtotal * 0.05;
   const total = subtotal + tax;
 
+  const validateStockBeforePayment = async () => {
+    try {
+      const stockChecks = await Promise.all(
+        filteredCart.map(async (item: any) => {
+          const res = await fetch(`/api/products/${item.product?._id}`);
+          if (res.ok) {
+            const product = await res.json();
+            if (product.stock < item.quantity) {
+              return { name: product.name, stock: product.stock, requested: item.quantity, ok: false };
+            }
+          }
+          return { ok: true };
+        })
+      );
+
+      const failed = stockChecks.find(check => !check.ok);
+      if (failed) {
+        toast.error(`Insufficient stock for ${failed.name}. Available: ${failed.stock}, Requested: ${failed.requested}`);
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Stock validation error:', error);
+      return false;
+    }
+  };
+
   // PayPal specific functions
-  const createOrder = (data: any, actions: any) => {
+  const createOrder = async (data: any, actions: any) => {
+    const isStockAvailable = await validateStockBeforePayment();
+    if (!isStockAvailable) {
+      throw new Error('Insufficient stock');
+    }
+
     return actions.order.create({
       purchase_units: [
         {
@@ -141,6 +173,9 @@ export default function PaymentPage() {
 
   // COD specific function
   const handlePlaceOrderCOD = async () => {
+    const isStockAvailable = await validateStockBeforePayment();
+    if (!isStockAvailable) return;
+
     // Construct order data using filteredCart
     const orderData = {
       items: filteredCart.map((item: any) => ({
@@ -178,6 +213,9 @@ export default function PaymentPage() {
 
   // PayMongo specific function
   const handlePayWithPaymongo = async () => {
+    const isStockAvailable = await validateStockBeforePayment();
+    if (!isStockAvailable) return;
+
     setPaymongoProcessing(true);
     try {
       const res = await fetch('/api/paymongo/create-payment-intent', {
@@ -241,7 +279,7 @@ export default function PaymentPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Shipping Details */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-8 shadow-xl">
+            <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-8 shadow-xl">
               <h2 className="text-xl font-black text-[var(--foreground)] mb-6 uppercase tracking-widest flex items-center gap-3">
                 <MapPin size={24} className="text-[var(--primary)]" /> Shipping Address
               </h2>
@@ -258,7 +296,7 @@ export default function PaymentPage() {
                   </Link>
                 </div>
               ) : (
-                <div className="text-center p-8 bg-[var(--input)] rounded-2xl border border-[var(--card-border)]">
+                <div className="text-center p-8 bg-[var(--input)] rounded-2xl border border-(--card-border)">
                   <p className="text-[var(--muted)] mb-4">No default shipping address selected.</p>
                   <Link href="/addresses" className="bg-[var(--primary)] hover:opacity-90 text-white dark:text-black px-6 py-2 rounded-xl text-sm font-bold transition-all">
                     Add/Select Address
@@ -268,13 +306,13 @@ export default function PaymentPage() {
             </div>
 
             {/* Payment Method Details */}
-            <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-8 shadow-xl">
+            <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-8 shadow-xl">
               <h2 className="text-xl font-black text-[var(--foreground)] mb-6 uppercase tracking-widest flex items-center gap-3">
                 <ShieldCheck size={24} className="text-[var(--primary)]" /> Payment Details
               </h2>
               {paymentMethod === 'paypal' && (
                 <div className="space-y-4">
-                  <div className="bg-[var(--input)] border border-[var(--card-border)] rounded-2xl p-5">
+                  <div className="bg-[var(--input)] border border-(--card-border) rounded-2xl p-5">
                     <h3 className="text-lg font-black text-[var(--foreground)] mb-2">Pay with PayPal</h3>
                     <p className="text-[var(--muted)] text-sm mb-4">You will be redirected to PayPal to complete your purchase.</p>
                     <div className="w-full">
@@ -291,7 +329,7 @@ export default function PaymentPage() {
               )}
               {paymentMethod === 'cod' && (
                 <div className="space-y-4">
-                  <div className="bg-[var(--input)] border border-[var(--card-border)] rounded-2xl p-5 text-center">
+                  <div className="bg-[var(--input)] border border-(--card-border) rounded-2xl p-5 text-center">
                     <Truck size={48} className="mx-auto text-[var(--primary)] mb-4" />
                     <h3 className="text-lg font-black text-[var(--foreground)] mb-2">Cash on Delivery</h3>
                     <p className="text-[var(--muted)] text-sm mb-4">Your order will be delivered to your address, and you can pay with cash upon arrival.</p>
@@ -306,7 +344,7 @@ export default function PaymentPage() {
               )}
               {paymentMethod === 'paymongo' && (
                 <div className="space-y-4">
-                  <div className="bg-[var(--input)] border border-[var(--card-border)] rounded-2xl p-5 text-center">
+                  <div className="bg-[var(--input)] border border-(--card-border) rounded-2xl p-5 text-center">
                     <CreditCard size={48} className="mx-auto text-[var(--primary)] mb-4" />
                     <h3 className="text-lg font-black text-[var(--foreground)] mb-2">Pay with PayMongo</h3>
                     <p className="text-[var(--muted)] text-sm mb-4">You will be redirected to PayMongo to complete your payment securely.</p>
@@ -327,7 +365,7 @@ export default function PaymentPage() {
                 </div>
               )}
               {!paymentMethod && (
-                <div className="text-center p-8 bg-[var(--input)] rounded-2xl border border-[var(--card-border)]">
+                <div className="text-center p-8 bg-[var(--input)] rounded-2xl border border-(--card-border)">
                   <p className="text-[var(--muted)] mb-4">No payment method selected. Please go back to choose one.</p>
                   <Link href="/checkout" className="bg-[var(--primary)] hover:opacity-90 text-white dark:text-black px-6 py-2 rounded-xl text-sm font-bold transition-all">
                     Choose Payment Method
@@ -339,7 +377,7 @@ export default function PaymentPage() {
 
           {/* Order Summary */}
           <div className="space-y-6">
-            <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-8 shadow-xl sticky top-32">
+            <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-8 shadow-xl sticky top-32">
               <h2 className="text-xl font-black text-[var(--foreground)] mb-6 uppercase tracking-widest">Order Summary</h2>
               
               <div className="space-y-4 mb-8">
@@ -349,7 +387,7 @@ export default function PaymentPage() {
                     <span className="text-[var(--foreground)] font-black">${(item.product?.price * item.quantity).toLocaleString()}</span>
                   </div>
                 ))}
-                <div className="flex justify-between text-sm border-t border-[var(--card-border)] pt-4">
+                <div className="flex justify-between text-sm border-t border-(--card-border) pt-4">
                   <span className="text-[var(--muted)] font-bold">Subtotal</span>
                   <span className="text-[var(--foreground)] font-black">${subtotal.toLocaleString()}</span>
                 </div>
@@ -361,7 +399,7 @@ export default function PaymentPage() {
                   <span className="text-[var(--muted)] font-bold">Shipping</span>
                   <span className="text-green-500 font-black uppercase">Free</span>
                 </div>
-                <div className="border-t border-[var(--card-border)] pt-4 mt-4 flex justify-between">
+                <div className="border-t border-(--card-border) pt-4 mt-4 flex justify-between">
                   <span className="text-[var(--foreground)] font-black uppercase tracking-widest">Total</span>
                   <span className="text-2xl font-black text-[var(--primary)] drop-shadow-sm">${total.toLocaleString()}</span>
                 </div>

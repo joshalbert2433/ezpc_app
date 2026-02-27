@@ -85,7 +85,7 @@ export default function AdminProductsPage() {
         </button>
       </header>
 
-      <div className="flex gap-4 items-center bg-[var(--card)] border border-[var(--card-border)] p-4 rounded-2xl shadow-sm">
+      <div className="flex gap-4 items-center bg-[var(--card)] border border-(--card-border) p-4 rounded-2xl shadow-sm">
         <Search className="text-[var(--muted)]" size={20} />
         <input 
           type="text" 
@@ -96,11 +96,11 @@ export default function AdminProductsPage() {
         />
       </div>
 
-      <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl overflow-hidden shadow-sm">
+      <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-[var(--card-border)] bg-[var(--input)]/50">
+              <tr className="border-b border-(--card-border) bg-[var(--input)]/50">
                 <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em]">Product Name</th>
                 <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em]">Category</th>
                 <th className="px-6 py-5 text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] text-center">Inventory</th>
@@ -117,7 +117,7 @@ export default function AdminProductsPage() {
                 <tr key={p._id} className="hover:bg-[var(--input)]/30 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-[var(--input)] rounded-xl flex items-center justify-center text-[var(--primary)] group-hover:scale-110 transition-transform overflow-hidden relative border border-[var(--card-border)]">
+                      <div className="w-12 h-12 bg-[var(--input)] rounded-xl flex items-center justify-center text-[var(--primary)] group-hover:scale-110 transition-transform overflow-hidden relative border border-(--card-border)">
                         {p.images && p.images.length > 0 ? (
                           <img src={p.images[0]} alt="" className="w-full h-full object-cover" />
                         ) : (
@@ -334,8 +334,8 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
   return (
     <>
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
-        <div className="bg-[var(--card)] border border-[var(--card-border)] w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
-          <div className="flex items-center justify-between p-6 border-b border-[var(--card-border)] shrink-0 bg-[var(--input)]/30">
+        <div className="bg-[var(--card)] border border-(--card-border) w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+          <div className="flex items-center justify-between p-6 border-b border-(--card-border) shrink-0 bg-[var(--input)]/30">
             <h2 className="text-xl font-black text-[var(--foreground)] flex items-center gap-2 uppercase tracking-tighter">
               <Package className="text-[var(--primary)]" size={24} />
               {product ? 'Update Product' : 'New Product'}
@@ -352,7 +352,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                 <input 
                   required
                   placeholder="e.g. RTX 5090 Ti Founders Edition"
-                  className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all placeholder:text-[var(--muted)]/50 font-bold"
+                  className="w-full bg-[var(--input)] border border-(--card-border) rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all placeholder:text-[var(--muted)]/50 font-bold"
                   value={formData.name}
                   onChange={e => setFormData({...formData, name: e.target.value})}
                 />
@@ -362,7 +362,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                 <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">Unit Class</label>
                 <div className="relative">
                   <select 
-                    className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all appearance-none cursor-pointer font-bold"
+                    className="w-full bg-[var(--input)] border border-(--card-border) rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all appearance-none cursor-pointer font-bold"
                     value={formData.category}
                     onChange={e => setFormData({...formData, category: e.target.value})}
                   >
@@ -382,7 +382,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                 <input 
                   required
                   placeholder="e.g. ASUS, NVIDIA"
-                  className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all placeholder:text-[var(--muted)]/50 font-bold"
+                  className="w-full bg-[var(--input)] border border-(--card-border) rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all placeholder:text-[var(--muted)]/50 font-bold"
                   value={formData.brand}
                   onChange={e => setFormData({...formData, brand: e.target.value})}
                 />
@@ -404,7 +404,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                       className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-[9px] font-black uppercase transition-all ${
                         formData.badge === item.id 
                           ? 'bg-[var(--primary)] border-[var(--primary)] text-white dark:text-black shadow-lg shadow-[var(--primary)]/20' 
-                          : 'bg-[var(--input)] border-[var(--card-border)] text-[var(--muted)] hover:border-slate-400'
+                          : 'bg-[var(--input)] border-(--card-border) text-[var(--muted)] hover:border-slate-400'
                       }`}
                     >
                       <item.icon size={14} />
@@ -422,7 +422,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                     type="number"
                     min="0"
                     required
-                    className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-2xl pl-14 pr-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all font-bold"
+                    className="w-full bg-[var(--input)] border border-(--card-border) rounded-2xl pl-14 pr-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all font-bold"
                     value={formData.stock}
                     onChange={e => setFormData({...formData, stock: Number(e.target.value)})}
                   />
@@ -434,7 +434,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                 <input 
                   type="number"
                   required
-                  className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all font-bold"
+                  className="w-full bg-[var(--input)] border border-(--card-border) rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all font-bold"
                   value={formData.price}
                   onChange={e => setFormData({...formData, price: Number(e.target.value)})}
                 />
@@ -471,16 +471,16 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                   type="button" 
                   disabled={isUploading || formData.images.length >= maxImages}
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center gap-2 text-[9px] font-black bg-[var(--input)] text-[var(--primary)] px-4 py-2.5 rounded-xl border border-[var(--card-border)] hover:border-[var(--primary)] transition-all uppercase disabled:opacity-30"
+                  className="flex items-center gap-2 text-[9px] font-black bg-[var(--input)] text-[var(--primary)] px-4 py-2.5 rounded-xl border border-(--card-border) hover:border-[var(--primary)] transition-all uppercase disabled:opacity-30"
                 >
                   {isUploading ? <Loader2 className="animate-spin" size={14} /> : <Upload size={14} />}
                   {isUploading ? 'Compiling...' : 'Upload Visuals'}
                 </button>
               </div>
               
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 bg-[var(--input)]/50 p-5 rounded-3xl border border-[var(--card-border)] min-h-[140px]">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 bg-[var(--input)]/50 p-5 rounded-3xl border border-(--card-border) min-h-[140px]">
                 {formData.images.map((url: string, index: number) => (
-                  <div key={index} className="relative aspect-square rounded-2xl overflow-hidden border border-[var(--card-border)] group ring-1 ring-black/5 shadow-sm">
+                  <div key={index} className="relative aspect-square rounded-2xl overflow-hidden border border-(--card-border) group ring-1 ring-black/5 shadow-sm">
                     <img src={url} alt="" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                     
                     {index === 0 && (
@@ -511,7 +511,7 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
                 ))}
                 {formData.images.length === 0 && !isUploading && (
                   <div className="col-span-full flex flex-col items-center justify-center py-12 text-[var(--muted)] italic text-[9px] gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-[var(--input)] flex items-center justify-center border border-[var(--card-border)]">
+                    <div className="w-14 h-14 rounded-2xl bg-[var(--input)] flex items-center justify-center border border-(--card-border)">
                       <ImageIcon size={24} className="opacity-20" />
                     </div>
                     INITIALIZE VISUAL INTERFACE
@@ -530,17 +530,17 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
               <textarea 
                 required
                 placeholder="List technical data points..."
-                className="w-full bg-[var(--input)] border border-[var(--card-border)] rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all h-40 resize-none placeholder:text-[var(--muted)]/50 text-sm font-medium leading-relaxed"
+                className="w-full bg-[var(--input)] border border-(--card-border) rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all h-40 resize-none placeholder:text-[var(--muted)]/50 text-sm font-medium leading-relaxed"
                 value={formData.specs}
                 onChange={e => setFormData({...formData, specs: e.target.value})}
               />
             </div>
 
-            <div className="flex gap-4 pt-4 border-t border-[var(--card-border)]">
+            <div className="flex gap-4 pt-4 border-t border-(--card-border)">
               <button 
                 type="button"
                 onClick={onClose}
-                className="px-8 py-4 rounded-2xl bg-[var(--input)] text-[var(--muted)] font-black uppercase text-[10px] tracking-widest hover:bg-[var(--card-border)] transition-all border border-[var(--card-border)]"
+                className="px-8 py-4 rounded-2xl bg-[var(--input)] text-[var(--muted)] font-black uppercase text-[10px] tracking-widest hover:bg-[var(--card-border)] transition-all border border-(--card-border)"
               >
                 Cancel
               </button>

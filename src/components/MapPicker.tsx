@@ -68,7 +68,7 @@ export default function MapPicker({ onLocationSelect }: MapPickerProps) {
   };
 
   return (
-    <div className="relative w-full h-[300px] rounded-2xl overflow-hidden border border-[var(--card-border)] shadow-inner">
+    <div className="relative w-full h-[300px] rounded-2xl overflow-hidden border border-(--card-border) shadow-inner">
       <MapContainer 
         center={[14.5995, 120.9842]} // Default center: Manila
         zoom={12} 
@@ -95,7 +95,7 @@ export default function MapPicker({ onLocationSelect }: MapPickerProps) {
         Live Targeting
       </div>
 
-      <div className="absolute bottom-4 left-4 right-4 bg-[var(--card)]/90 backdrop-blur-md p-2 rounded-xl border border-[var(--card-border)] z-10 shadow-xl">
+      <div className="absolute bottom-4 left-4 right-4 bg-[var(--card)]/90 backdrop-blur-md p-2 rounded-xl border border-(--card-border) z-10 shadow-xl">
         <p className="text-[9px] font-black text-[var(--foreground)] uppercase tracking-widest text-center opacity-80">
           Click map to adjust pin. Fields will auto-populate below.
         </p>

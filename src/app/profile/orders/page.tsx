@@ -100,7 +100,7 @@ export default function OrdersPage() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-20 text-center shadow-sm">
+        <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-20 text-center shadow-sm">
           <Package size={48} className="mx-auto text-[var(--card-border)] mb-6" />
           <h2 className="text-2xl font-black text-[var(--foreground)] mb-4">No Orders Yet</h2>
           <p className="text-[var(--muted)] max-w-md mx-auto mb-8">It looks like you haven't placed any orders. Start exploring our products!</p>
@@ -111,8 +111,8 @@ export default function OrdersPage() {
       ) : (
         <div className="space-y-8">
           {orders.map((order) => (
-            <div key={order._id} className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl p-8 shadow-xl">
-              <div className="flex justify-between items-center border-b border-[var(--card-border)] pb-4 mb-4">
+            <div key={order._id} className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-8 shadow-xl">
+              <div className="flex justify-between items-center border-b border-(--card-border) pb-4 mb-4">
                 <h2 className="text-xl font-black text-[var(--foreground)]">Order #{order._id.slice(-6).toUpperCase()}</h2>
                 <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
                   order.status === 'delivered' ? 'bg-green-500/10 text-green-500' :
@@ -145,20 +145,40 @@ export default function OrdersPage() {
                 </div>
               </div>
 
-              <div className="space-y-3 pt-6 border-t border-[var(--card-border)]">
-                <h3 className="text-lg font-black text-[var(--foreground)] mb-3">Items</h3>
-                {order.items.map((item) => (
-                  <div key={item.productId} className="flex justify-between items-center text-sm">
-                    <div className="flex items-center gap-3">
-                      {item.image && <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded-md" />}
-                      <div>
-                        <p className="font-black text-[var(--foreground)]">{item.name}</p>
-                        <p className="text-[var(--muted)] text-xs">Qty: {item.quantity}</p>
+              <div className="space-y-3 pt-6 border-t border-(--card-border)">
+                <h3 className="text-lg font-black text-[var(--foreground)] mb-3 uppercase tracking-widest text-xs opacity-50">Deployed Components</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  {order.items.map((item) => (
+                    <div key={item.productId} className="flex justify-between items-center bg-[var(--input)]/50 p-4 rounded-2xl border border-(--card-border) group">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-[var(--input)] rounded-xl overflow-hidden border border-(--card-border) flex-shrink-0">
+                          {item.image ? (
+                            <img src={item.image} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-[var(--muted)] opacity-20"><Package size={20} /></div>
+                          )}
+                        </div>
+                        <div>
+                          <Link href={`/product/${item.productId}`} className="font-black text-[var(--foreground)] hover:text-[var(--primary)] transition-colors tracking-tight">
+                            {item.name}
+                          </Link>
+                          <p className="text-[10px] text-[var(--muted)] font-black uppercase tracking-widest">Qty: {item.quantity} × ${item.price.toLocaleString()}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="font-black text-[var(--foreground)] text-sm">${(item.price * item.quantity).toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                        {order.status === 'delivered' && (
+                          <Link 
+                            href={`/product/${item.productId}?tab=reviews`}
+                            className="bg-[var(--primary)]/10 text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white dark:hover:text-black px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                          >
+                            Review Component
+                          </Link>
+                        )}
                       </div>
                     </div>
-                    <span className="font-black text-[var(--foreground)]">${(item.price * item.quantity).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           ))}

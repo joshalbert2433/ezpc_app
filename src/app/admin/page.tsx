@@ -28,7 +28,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-[var(--card)] border border-[var(--card-border)] p-6 rounded-2xl hover:border-[var(--primary)]/30 transition-all group shadow-sm">
+          <div key={i} className="bg-[var(--card)] border border-(--card-border) p-6 rounded-2xl hover:border-[var(--primary)]/30 transition-all group shadow-sm">
             <div className={`w-12 h-12 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
               <stat.icon size={24} />
             </div>
@@ -39,7 +39,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-2xl p-6 shadow-sm">
+        <div className="bg-[var(--card)] border border-(--card-border) rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-black text-[var(--foreground)] flex items-center gap-2 uppercase tracking-tight">
               <TrendingUp size={20} className="text-[var(--primary)]" /> Recent Activity
@@ -47,9 +47,9 @@ export default function AdminDashboard() {
           </div>
           <div className="space-y-4">
             {recentActivity.map((activity) => (
-              <div key={activity.id} className="flex items-center justify-between p-4 bg-[var(--input)]/50 rounded-xl border border-[var(--card-border)] group hover:border-[var(--primary)]/20 transition-all">
+              <div key={activity.id} className="flex items-center justify-between p-4 bg-[var(--input)]/50 rounded-xl border border-(--card-border) group hover:border-[var(--primary)]/20 transition-all">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-[var(--card)] border border-[var(--card-border)] rounded-lg flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--primary)] transition-colors">
+                  <div className="w-10 h-10 bg-[var(--card)] border border-(--card-border) rounded-lg flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--primary)] transition-colors">
                     <activity.icon size={18} />
                   </div>
                   <div>
@@ -63,7 +63,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-4 shadow-sm relative overflow-hidden group">
+        <div className="bg-[var(--card)] border border-(--card-border) rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-4 shadow-sm relative overflow-hidden group">
           <div className="absolute inset-0 bg-[var(--primary)]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <div className="w-20 h-20 bg-[var(--primary)]/10 text-[var(--primary)] rounded-full flex items-center justify-center animate-pulse z-10">
             <Box size={40} />
