@@ -217,7 +217,9 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
     stock: product?.stock || 0,
     badge: product?.badge || '',
     specs: product?.specs || '',
+    description: product?.description || '',
     images: Array.isArray(product?.images) ? [...product.images] : [],
+    fullSpecs: Array.isArray(product?.fullSpecs) ? [...product.fullSpecs] : [],
   });
 
   useEffect(() => {
@@ -231,7 +233,9 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
         stock: product.stock || 0,
         badge: product.badge || '',
         specs: product.specs || '',
+        description: product.description || '',
         images: Array.isArray(product.images) ? [...product.images] : [],
+        fullSpecs: Array.isArray(product.fullSpecs) ? [...product.fullSpecs] : [],
       });
     }
   }, [product]);
@@ -297,6 +301,25 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
     newImages.unshift(selectedImage);
     setFormData({ ...formData, images: newImages });
     toast.success('Primary updated');
+  };
+
+  const addSpec = () => {
+    setFormData({
+      ...formData,
+      fullSpecs: [...formData.fullSpecs, { label: '', value: '' }]
+    });
+  };
+
+  const removeSpec = (index: number) => {
+    const newSpecs = [...formData.fullSpecs];
+    newSpecs.splice(index, 1);
+    setFormData({ ...formData, fullSpecs: newSpecs });
+  };
+
+  const updateSpec = (index: number, field: 'label' | 'value', value: string) => {
+    const newSpecs = [...formData.fullSpecs];
+    newSpecs[index][field] = value;
+    setFormData({ ...formData, fullSpecs: newSpecs });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -526,14 +549,88 @@ function ProductFormModal({ product, onClose, onSuccess }: any) {
             </div>
 
             <div>
-              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">Product Specifications</label>
+              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">Product Description (Marketing Hype)</label>
+              <textarea 
+                placeholder="Write a compelling description... (Leave empty for auto-generated hype)"
+                className="w-full bg-[var(--input)] border border-(--card-border) rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all h-32 resize-none placeholder:text-[var(--muted)]/50 text-sm font-medium leading-relaxed"
+                value={formData.description}
+                onChange={e => setFormData({...formData, description: e.target.value})}
+              />
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em] mb-3">Product Specifications (Brief)</label>
               <textarea 
                 required
-                placeholder="List technical data points..."
-                className="w-full bg-[var(--input)] border border-(--card-border) rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all h-40 resize-none placeholder:text-[var(--muted)]/50 text-sm font-medium leading-relaxed"
+                placeholder="List technical data points for the card..."
+                className="w-full bg-[var(--input)] border border-(--card-border) rounded-2xl px-5 py-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all h-24 resize-none placeholder:text-[var(--muted)]/50 text-sm font-medium leading-relaxed"
                 value={formData.specs}
                 onChange={e => setFormData({...formData, specs: e.target.value})}
               />
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <label className="block text-[10px] font-black text-[var(--muted)] uppercase tracking-[0.2em]">Detailed Key-Value Specs</label>
+                <button 
+                  type="button"
+                  onClick={addSpec}
+                  className="text-[9px] font-black bg-[var(--primary)]/10 text-[var(--primary)] px-4 py-2 rounded-xl border border-[var(--primary)]/20 hover:bg-[var(--primary)]/20 transition-all uppercase flex items-center gap-2"
+                >
+                  <Plus size={14} /> Add Parameter
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {formData.fullSpecs.map((spec: any, index: number) => (
+                  <div key={index} className="flex gap-3 items-center group animate-in slide-in-from-left-2 duration-200">
+                    <input 
+                      placeholder="Label (e.g. RGB)"
+                      className="flex-1 bg-[var(--input)] border border-(--card-border) rounded-xl px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all text-xs font-bold"
+                      value={spec.label}
+                      onChange={e => updateSpec(index, 'label', e.target.value)}
+                    />
+                    <div className="flex-1 flex gap-2">
+                      <input 
+                        placeholder="Value (e.g. Yes)"
+                        className="flex-1 bg-[var(--input)] border border-(--card-border) rounded-xl px-4 py-3 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all text-xs font-bold"
+                        value={spec.value}
+                        onChange={e => updateSpec(index, 'value', e.target.value)}
+                      />
+                      <div className="flex gap-1">
+                        <button 
+                          type="button"
+                          onClick={() => updateSpec(index, 'value', 'true')}
+                          className={`w-10 rounded-xl border flex items-center justify-center transition-all ${spec.value === 'true' ? 'bg-green-500 border-green-500 text-white' : 'bg-[var(--input)] border-(--card-border) text-[var(--muted)] hover:border-green-500/50'}`}
+                          title="Set as Boolean TRUE"
+                        >
+                          <Check size={14} />
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={() => updateSpec(index, 'value', 'false')}
+                          className={`w-10 rounded-xl border flex items-center justify-center transition-all ${spec.value === 'false' ? 'bg-red-500 border-red-500 text-white' : 'bg-[var(--input)] border-(--card-border) text-[var(--muted)] hover:border-red-500/50'}`}
+                          title="Set as Boolean FALSE"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => removeSpec(index)}
+                      className="p-3 text-[var(--muted)] hover:text-red-500 transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                ))}
+                {formData.fullSpecs.length === 0 && (
+                  <div className="text-center py-8 border-2 border-dashed border-(--card-border) rounded-3xl text-[9px] font-black text-[var(--muted)] uppercase tracking-widest opacity-30">
+                    NO TECHNICAL PARAMETERS DEFINED
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="flex gap-4 pt-4 border-t border-(--card-border)">

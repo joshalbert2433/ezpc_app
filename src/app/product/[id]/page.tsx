@@ -20,7 +20,8 @@ import {
   Maximize2,
   X,
   Send,
-  Loader2
+  Loader2,
+  Check
 } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
@@ -64,6 +65,21 @@ export default function ProductDetails() {
   const reviewFormRef = useRef<HTMLDivElement>(null);
 
   const isWishlisted = wishlist.some(item => (item._id || item.id) === id);
+
+  const marketingHype = React.useMemo(() => {
+    const templates = [
+      `The ${product?.name} ${product?.category} from ${product?.brand} represents the pinnacle of performance engineering.`,
+      `Engineered for elite performance, the ${product?.name} sets a new benchmark in ${product?.category} technology.`,
+      `Experience unmatched power with the ${product?.brand} ${product?.name}, a masterpiece of modern hardware design.`,
+      `The ${product?.name} is meticulously crafted by ${product?.brand} to deliver extreme results for demanding enthusiasts.`,
+      `Unlock the true potential of your build with the industry-leading ${product?.name} ${product?.category}.`,
+      `Forged in the pursuit of perfection, the ${product?.brand} ${product?.name} redefines what is possible in ${product?.category} hardware.`,
+      `A synergy of raw power and elegant design, the ${product?.name} is the definitive choice for next-gen setups.`
+    ];
+    // Use product name length + category length as a seed for stable "randomness" per product
+    const seed = (product?.name?.length || 0) + (product?.category?.length || 0);
+    return templates[seed % templates.length];
+  }, [product]);
 
   const StarRating = ({ rating, size = 16, interactive = false, onRatingChange }: { rating: number, size?: number, interactive?: boolean, onRatingChange?: (r: number) => void }) => {
     return (
@@ -345,7 +361,7 @@ export default function ProductDetails() {
           </div>
 
           <p className="text-[var(--muted)] text-lg mb-10 leading-relaxed font-medium border-l-2 border-[var(--primary)]/20 pl-6 italic">
-            {product.description || `The ${product.name} ${product.category} from ${product.brand} represents the pinnacle of performance engineering.`}
+            {product.description || marketingHype}
           </p>
 
           <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-8 mb-10 shadow-xl relative overflow-hidden group">
@@ -427,19 +443,50 @@ export default function ProductDetails() {
 
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
               {activeTab === 'specs' ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-1">
-                  {(product.fullSpecs && product.fullSpecs.length > 0 ? product.fullSpecs : [
-                    { label: "Category", value: product.category },
-                    { label: "Manufacturer", value: product.brand },
-                    { label: "Product Line", value: product.specs },
-                    { label: "Global Stock", value: "Verified" },
-                    { label: "Build Quality", value: "Premium" }
-                  ]).map((spec: any, i: number) => (
-                    <div key={i} className="flex justify-between py-4 border-b border-(--card-border) group cursor-default">
-                      <span className="text-[var(--muted)] text-[10px] font-black uppercase tracking-widest group-hover:text-[var(--primary)]/50 transition-colors">{spec.label}</span>
-                      <span className="text-[var(--foreground)] text-[10px] font-black group-hover:text-[var(--primary)] transition-colors">{spec.value}</span>
+                <div className="space-y-10">
+                  {/* Brief Specs Summary */}
+                  <div className="bg-[var(--input)]/20 p-8 rounded-3xl border border-(--card-border)">
+                    <h3 className="text-[10px] font-black text-[var(--primary)] uppercase tracking-[0.3em] mb-4">Brief Overview</h3>
+                    <p className="text-sm text-[var(--foreground)] font-medium leading-relaxed italic">
+                      {product.specs}
+                    </p>
+                  </div>
+
+                  {/* Detailed Key-Value Grid */}
+                  <div>
+                    <h3 className="text-[10px] font-black text-[var(--primary)] uppercase tracking-[0.3em] mb-6">Technical Parameters</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-1">
+                      {/* Standard Specs (Always shown) */}
+                      <div className="flex justify-between items-center py-4 border-b border-(--card-border) group cursor-default">
+                        <span className="text-[var(--muted)] text-[10px] font-black uppercase tracking-widest group-hover:text-[var(--primary)]/50 transition-colors">Manufacturer</span>
+                        <span className="text-[var(--foreground)] text-[10px] font-black group-hover:text-[var(--primary)] transition-colors">{product.brand}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-4 border-b border-(--card-border) group cursor-default">
+                        <span className="text-[var(--muted)] text-[10px] font-black uppercase tracking-widest group-hover:text-[var(--primary)]/50 transition-colors">Category</span>
+                        <span className="text-[var(--foreground)] text-[10px] font-black group-hover:text-[var(--primary)] transition-colors">{product.category}</span>
+                      </div>
+
+                      {/* Custom Detailed Specs */}
+                      {(product.fullSpecs || []).map((spec: any, i: number) => (
+                        <div key={i} className="flex justify-between items-center py-4 border-b border-(--card-border) group cursor-default">
+                          <span className="text-[var(--muted)] text-[10px] font-black uppercase tracking-widest group-hover:text-[var(--primary)]/50 transition-colors">{spec.label}</span>
+                          <div className="text-[var(--foreground)] text-[10px] font-black group-hover:text-[var(--primary)] transition-colors">
+                            {spec.value === 'true' ? (
+                              <div className="bg-green-500/10 text-green-500 p-1 rounded-lg border border-green-500/20 shadow-[0_0_10px_rgba(34,197,94,0.1)]">
+                                <Check size={14} strokeWidth={4} />
+                              </div>
+                            ) : spec.value === 'false' ? (
+                              <div className="bg-red-500/10 text-red-500 p-1 rounded-lg border border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.1)]">
+                                <X size={14} strokeWidth={4} />
+                              </div>
+                            ) : (
+                              <span>{spec.value}</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-8">
