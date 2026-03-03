@@ -1,7 +1,7 @@
 // src/components/Header.tsx
 'use client';
 
-import { Search, ShoppingCart, Heart, User, Layers, LogOut, MapPin, User as UserIcon, Settings } from 'lucide-react';
+import { Search, ShoppingCart, Heart, User, Layers, LogOut, MapPin, User as UserIcon, Settings, MessageSquare } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
@@ -159,6 +159,14 @@ const Header: React.FC = () => {
                                   onClick={() => setIsDropdownOpen(false)}
                                 >
                                   <MapPin size={16} /> Logistic Points
+                                </Link>
+
+                                <Link
+                                  href="/tickets"
+                                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-[var(--foreground)] hover:bg-[var(--input)] hover:text-[var(--primary)] transition-all font-medium"
+                                  onClick={() => setIsDropdownOpen(false)}
+                                >
+                                  <MessageSquare size={16} /> Support Tickets
                                 </Link>
                 <div className="h-px bg-[var(--card-border)] my-1"></div>
                 

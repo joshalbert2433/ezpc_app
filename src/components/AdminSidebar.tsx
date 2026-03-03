@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Box, Users, Settings, LogOut, ChevronRight, ShoppingBag } from 'lucide-react';
+import { LayoutDashboard, Box, Users, Settings, LogOut, ChevronRight, ShoppingBag, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -26,6 +26,7 @@ export default function AdminSidebar() {
     { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { label: 'Products', href: '/admin/products', icon: Box },
     { label: 'Orders', href: '/admin/orders', icon: ShoppingBag },
+    { label: 'Support', href: '/admin/tickets', icon: MessageSquare },
     { label: 'Users', href: '/admin/users', icon: Users },
     { label: 'Settings', href: '/admin/settings', icon: Settings },
   ];

@@ -28,7 +28,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // 4. Protected user routes (like dashboard, cart, wishlist)
-  const protectedUserPaths = ['/dashboard', '/checkout', '/profile', '/addresses'];
+  const protectedUserPaths = ['/dashboard', '/checkout', '/profile', '/addresses', '/tickets'];
   if (protectedUserPaths.some(path => pathname.startsWith(path))) {
     if (!session) return NextResponse.redirect(new URL('/login', request.url));
   }
