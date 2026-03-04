@@ -81,9 +81,9 @@ export default function ProductDetails() {
     return templates[seed % templates.length];
   }, [product]);
 
-  const StarRating = ({ rating, size = 16, interactive = false, onRatingChange }: { rating: number, size?: number, interactive?: boolean, onRatingChange?: (r: number) => void }) => {
+  const StarRating = ({ rating, size = 12, interactive = false, onRatingChange }: { rating: number, size?: number, interactive?: boolean, onRatingChange?: (r: number) => void }) => {
     return (
-      <div className="flex gap-1">
+      <div className="flex gap-0.5">
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
@@ -225,7 +225,7 @@ export default function ProductDetails() {
     return (
       <div className="max-w-7xl mx-auto px-6 py-20 text-center flex flex-col items-center justify-center space-y-4">
         <div className="w-12 h-12 border-4 border-[var(--primary)]/20 border-t-[var(--primary)] rounded-full animate-spin"></div>
-        <p className="animate-pulse text-[var(--muted)] font-black uppercase tracking-widest text-xs">Loading Product...</p>
+        <p className="animate-pulse text-[var(--muted)] font-black uppercase tracking-widest text-xs text-black dark:text-white">Loading Product...</p>
       </div>
     );
   }
@@ -233,8 +233,8 @@ export default function ProductDetails() {
   if (!product) {
     return (
       <div className="max-w-7xl mx-auto px-6 py-20 text-center">
-        <h2 className="text-3xl font-black mb-4 text-[var(--foreground)]">Product Not Found</h2>
-        <Link href="/" className="inline-block bg-[var(--primary)] hover:opacity-90 text-white dark:text-black px-8 py-3 rounded-xl font-black transition-all">
+        <h2 className="text-2xl font-black mb-4 text-[var(--foreground)] text-black dark:text-white">Product Not Found</h2>
+        <Link href="/" className="inline-block bg-[var(--primary)] hover:opacity-90 text-white dark:text-black px-6 py-2.5 rounded-xl font-black transition-all text-xs uppercase tracking-widest">
           RETURN TO SHOP
         </Link>
       </div>
@@ -245,25 +245,25 @@ export default function ProductDetails() {
   const isOnSale = product.badge === 'sale' && product.salePrice && product.salePrice > 0;
 
   return (
-    <main className="max-w-7xl mx-auto px-6 py-8 transition-colors duration-300">
+    <main className="max-w-7xl mx-auto px-6 py-6 transition-colors duration-300">
       {/* Breadcrumbs / Back */}
-      <Link href="/" className="inline-flex items-center gap-2 text-[var(--muted)] hover:text-[var(--primary)] mb-8 transition-colors group">
-        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
-        <span className="text-xs font-black uppercase tracking-widest">Back to products</span>
+      <Link href="/" className="inline-flex items-center gap-2 text-[var(--muted)] hover:text-[var(--primary)] mb-6 transition-colors group">
+        <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> 
+        <span className="text-[10px] font-black uppercase tracking-widest">Back to catalog</span>
       </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Product Image Section */}
-        <div className="space-y-6">
-          <div className="aspect-square bg-[var(--card)] border border-(--card-border) rounded-3xl relative overflow-hidden group shadow-lg">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Product Image Section (5 columns) */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="aspect-square bg-[var(--card)] border border-(--card-border) rounded-2xl relative overflow-hidden group shadow-sm">
             {product.badge && (
-              <span className={`absolute top-6 left-6 text-[10px] font-black px-3 py-1.5 rounded-full z-20 shadow-lg uppercase tracking-widest ${
+              <span className={`absolute top-4 left-4 text-[8px] font-black px-2 py-1 rounded-md z-20 shadow-lg uppercase tracking-widest ${
                 product.badge === 'sale' ? 'bg-red-500 text-white animate-pulse' :
                 product.badge === 'hot' ? 'bg-orange-500 text-white shadow-orange-500/50' :
                 'bg-[var(--primary)] text-white dark:text-black shadow-cyan-500/50'
               }`}>
                 {product.badge === 'sale' && product.price && product.salePrice 
-                  ? `${Math.round((1 - product.salePrice / product.price) * 100)}% DISCOUNT` 
+                  ? `${Math.round((1 - product.salePrice / product.price) * 100)}% OFF` 
                   : product.badge}
               </span>
             )}
@@ -288,16 +288,16 @@ export default function ProductDetails() {
                   {images.map((img, index) => (
                     <SwiperSlide key={index}>
                       <div 
-                        className="w-full h-full flex items-center justify-center p-8 cursor-zoom-in relative"
+                        className="w-full h-full flex items-center justify-center p-6 cursor-zoom-in relative"
                         onClick={() => setZoomImage(img)}
                       >
                         <img 
                           src={img} 
                           alt={`${product.name} - ${index + 1}`} 
-                          className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-110"
+                          className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-105"
                         />
-                        <div className="absolute bottom-6 right-6 p-2 bg-[var(--background)]/50 backdrop-blur-md rounded-lg border border-(--card-border) opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Maximize2 size={16} className="text-[var(--primary)]" />
+                        <div className="absolute bottom-4 right-4 p-1.5 bg-[var(--background)]/50 backdrop-blur-md rounded-lg border border-(--card-border) opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Maximize2 size={14} className="text-[var(--primary)]" />
                         </div>
                       </div>
                     </SwiperSlide>
@@ -307,181 +307,173 @@ export default function ProductDetails() {
                 {/* Custom Navigation */}
                 {images.length > 1 && (
                   <>
-                    <button className="swiper-button-prev-custom absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 flex items-center justify-center rounded-xl bg-[var(--background)]/80 backdrop-blur-md border border-(--card-border) text-[var(--muted)] hover:text-[var(--primary)] transition-all group active:scale-90 shadow-sm">
-                      <ChevronLeft size={24} className="group-hover:-translate-x-0.5 transition-transform" />
+                    <button className="swiper-button-prev-custom absolute left-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--background)]/80 backdrop-blur-md border border-(--card-border) text-[var(--muted)] hover:text-[var(--primary)] transition-all group active:scale-90 shadow-sm">
+                      <ChevronLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
                     </button>
-                    <button className="swiper-button-next-custom absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 flex items-center justify-center rounded-xl bg-[var(--background)]/80 backdrop-blur-md border border-(--card-border) text-[var(--muted)] hover:text-[var(--primary)] transition-all group active:scale-90 shadow-sm">
-                      <ChevronRight size={24} className="group-hover:translate-x-0.5 transition-transform" />
+                    <button className="swiper-button-next-custom absolute right-3 top-1/2 -translate-y-1/2 z-30 w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--background)]/80 backdrop-blur-md border border-(--card-border) text-[var(--muted)] hover:text-[var(--primary)] transition-all group active:scale-90 shadow-sm">
+                      <ChevronRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
                     </button>
                   </>
                 )}
               </>
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center">
-                <Cpu className="w-32 h-32 text-[var(--muted)] opacity-20 mb-4" />
-                <p className="text-[var(--muted)] text-[10px] font-black uppercase tracking-widest">No visual data available</p>
+                <Cpu className="w-20 h-20 text-[var(--muted)] opacity-20 mb-3" />
+                <p className="text-[var(--muted)] text-[8px] font-black uppercase tracking-widest">No visual data</p>
               </div>
             )}
           </div>
           
           {/* Trust Badges */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3">
             {[
-              { icon: ShieldCheck, label: "3 Year Warranty" },
-              { icon: Truck, label: "Fast Shipping" },
-              { icon: RotateCcw, label: "14-Day Returns" }
+              { icon: ShieldCheck, label: "3yr Warranty" },
+              { icon: Truck, label: "Fast Ship" },
+              { icon: RotateCcw, label: "14d Return" }
             ].map((badge, i) => (
-              <div key={i} className="bg-[var(--card)] border border-(--card-border) rounded-2xl p-4 text-center hover:border-[var(--primary)]/30 transition-all group cursor-default shadow-sm">
-                <badge.icon className="w-6 h-6 text-[var(--primary)] mx-auto mb-3 group-hover:scale-110 transition-all" />
-                <span className="text-[9px] text-[var(--muted)] font-black uppercase tracking-widest transition-colors">{badge.label}</span>
+              <div key={i} className="bg-[var(--card)] border border-(--card-border) rounded-xl p-3 text-center hover:border-[var(--primary)]/30 transition-all group cursor-default shadow-sm">
+                <badge.icon className="w-4 h-4 text-[var(--primary)] mx-auto mb-2 group-hover:scale-110 transition-all" />
+                <span className="text-[7px] text-[var(--muted)] font-black uppercase tracking-widest block transition-colors leading-none">{badge.label}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Product Info Section */}
-        <div className="flex flex-col">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="text-[var(--primary)] font-black text-xs tracking-[0.3em] uppercase">{product.brand}</span>
+        {/* Product Info Section (7 columns) */}
+        <div className="lg:col-span-7 flex flex-col">
+          <div className="mb-1.5 flex items-center gap-2">
+            <span className="text-[var(--primary)] font-black text-[10px] tracking-[0.3em] uppercase">{product.brand}</span>
             <span className="text-[var(--card-border)] font-black">/</span>
-            <span className="text-[var(--muted)] text-xs font-black uppercase tracking-[0.2em]">{product.category}</span>
+            <span className="text-[var(--muted)] text-[10px] font-black uppercase tracking-[0.2em]">{product.category}</span>
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tighter text-[var(--foreground)] leading-[1.1]">{product.name}</h1>
+          <h1 className="text-2xl md:text-3xl font-black mb-4 tracking-tighter text-[var(--foreground)] leading-tight text-black dark:text-white uppercase">{product.name}</h1>
           
-          <div className="flex items-center gap-6 mb-10">
-            <div className="flex items-center gap-1.5 bg-[var(--input)] px-3 py-1.5 rounded-lg border border-(--card-border)">
-              <StarRating rating={product.rating || 0} size={14} />
-              <span className="ml-2 font-black text-[var(--foreground)] text-sm">{product.rating || 'No Rating'}</span>
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-1 bg-[var(--input)] px-2 py-1 rounded-lg border border-(--card-border)">
+              <StarRating rating={product.rating || 0} size={12} />
+              <span className="ml-1 font-black text-[var(--foreground)] text-[11px] text-black dark:text-white">{product.rating || '0'}</span>
             </div>
-            <div className="flex items-center gap-2 text-[var(--muted)] font-black text-xs uppercase tracking-widest">
-              <MessageSquare className="w-4 h-4 text-[var(--primary)]/50" />
-              <span>{product.reviews || 0} Reviews</span>
+            <div className="flex items-center gap-1.5 text-[var(--muted)] font-black text-[9px] uppercase tracking-widest">
+              <MessageSquare className="w-3 h-3 text-[var(--primary)]/50" />
+              <span>{product.reviews || 0} Build Reviews</span>
             </div>
           </div>
 
-          <p className="text-[var(--muted)] text-lg mb-10 leading-relaxed font-medium border-l-2 border-[var(--primary)]/20 pl-6 italic">
+          <p className="text-[var(--muted)] text-sm mb-6 leading-relaxed font-medium border-l-2 border-[var(--primary)]/20 pl-4 italic">
             {product.description || marketingHype}
           </p>
 
-          <div className="bg-[var(--card)] border border-(--card-border) rounded-3xl p-8 mb-10 shadow-xl relative overflow-hidden group">
-            <div className="flex items-end justify-between mb-8">
+          <div className="bg-[var(--card)] border border-(--card-border) rounded-2xl p-6 mb-6 shadow-sm relative overflow-hidden group">
+            <div className="flex items-end justify-between mb-6">
               <div>
-                <span className="text-[var(--muted)] text-[10px] font-black uppercase tracking-[0.2em] block mb-2">
-                  {isOnSale ? 'Promotional Price' : 'Unit Price'}
+                <span className="text-[var(--muted)] text-[8px] font-black uppercase tracking-[0.2em] block mb-1">
+                  {isOnSale ? 'Promotional Value' : 'Standard Value'}
                 </span>
-                <div className="flex items-center gap-4">
-                  <span className={`text-5xl font-black ${isOnSale ? 'text-red-500' : 'text-[var(--foreground)]'}`}>
+                <div className="flex items-center gap-3">
+                  <span className={`text-3xl font-black ${isOnSale ? 'text-red-500' : 'text-[var(--foreground)] text-black dark:text-white'}`}>
                     ${(isOnSale ? product.salePrice : product.price)?.toLocaleString()}
                   </span>
                   {isOnSale && (
-                    <span className="text-xl text-[var(--muted)] line-through font-black">
+                    <span className="text-sm text-[var(--muted)] line-through font-black">
                       ${product.price.toLocaleString()}
                     </span>
                   )}
                 </div>
               </div>
               <div className="text-right">
-                <div className="flex items-center gap-2 justify-end mb-1">
-                  <div className={`w-1.5 h-1.5 rounded-full ${product.stock > 0 ? 'bg-cyan-400 animate-ping' : 'bg-red-500'}`}></div>
-                  <span className={`text-xs font-black uppercase tracking-widest ${product.stock > 0 ? 'text-[var(--primary)]' : 'text-red-500'}`}>
-                    {product.stock > 0 ? 'Status: Ready' : 'Out of Stock'}
+                <div className="flex items-center gap-1.5 justify-end mb-0.5">
+                  <div className={`w-1.5 h-1.5 rounded-full ${product.stock > 0 ? 'bg-cyan-400 animate-pulse' : 'bg-red-500'}`}></div>
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${product.stock > 0 ? 'text-[var(--primary)]' : 'text-red-500'}`}>
+                    {product.stock > 0 ? 'Ready' : 'Out of Stock'}
                   </span>
                 </div>
-                <span className="text-[var(--muted)] text-[9px] font-black uppercase tracking-widest">
-                  {product.stock > 0 ? `${product.stock} Units Available` : 'Restocking in progress'}
+                <span className="text-[var(--muted)] text-[8px] font-black uppercase tracking-widest">
+                  {product.stock > 0 ? `${product.stock} Units In Stock` : 'Restocking'}
                 </span>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex items-center justify-between bg-[var(--input)] border border-(--card-border) rounded-2xl px-5 py-3 sm:w-36">
-                <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="text-[var(--muted)] hover:text-[var(--primary)] transition-all p-1 hover:scale-125">
-                  <Minus className="w-4 h-4" />
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex items-center justify-between bg-[var(--input)] border border-(--card-border) rounded-xl px-4 py-2 sm:w-32">
+                <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="text-[var(--muted)] hover:text-[var(--primary)] transition-all p-1">
+                  <Minus className="w-3.5 h-3.5" />
                 </button>
-                <span className="font-black text-xl text-[var(--foreground)] w-8 text-center">{product.stock > 0 ? quantity : 0}</span>
-                <button onClick={() => setQuantity(q => Math.min(product.stock, q + 1))} className="text-[var(--muted)] hover:text-[var(--primary)] transition-all p-1 hover:scale-125">
-                  <Plus className="w-4 h-4" />
+                <span className="font-black text-base text-[var(--foreground)] w-6 text-center text-black dark:text-white">{product.stock > 0 ? quantity : 0}</span>
+                <button onClick={() => setQuantity(q => Math.min(product.stock, q + 1))} className="text-[var(--muted)] hover:text-[var(--primary)] transition-all p-1">
+                  <Plus className="w-3.5 h-3.5" />
                 </button>
               </div>
               
               <button 
                 onClick={() => handleAction('cart')}
                 disabled={product.stock <= 0}
-                className="flex-1 bg-[var(--primary)] hover:opacity-90 text-white dark:text-black font-black rounded-2xl py-4 flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg disabled:bg-[var(--card-border)] disabled:text-[var(--muted)] disabled:shadow-none disabled:cursor-not-allowed"
+                className="flex-1 bg-[var(--primary)] hover:opacity-90 text-white dark:text-black font-black rounded-xl py-3 flex items-center justify-center gap-2 transition-all active:scale-95 shadow-md disabled:bg-[var(--card-border)] disabled:text-[var(--muted)] disabled:shadow-none disabled:cursor-not-allowed text-[10px] uppercase tracking-[0.2em]"
               >
-                <ShoppingCart className="w-5 h-5" /> {product.stock > 0 ? 'ADD TO CART' : 'OUT OF STOCK'}
+                <ShoppingCart className="w-4 h-4" /> {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
               </button>
               
               <button 
                 onClick={() => handleAction('wishlist')}
-                className={`p-5 border border-(--card-border) rounded-2xl transition-all group ${isWishlisted ? 'bg-red-500/10 border-red-500/50 text-red-500' : 'bg-[var(--input)] hover:bg-[var(--background)] hover:text-red-400 text-[var(--muted)]'}`}
+                className={`p-3 border border-(--card-border) rounded-xl transition-all group ${isWishlisted ? 'bg-red-500/10 border-red-500/50 text-red-500' : 'bg-[var(--input)] hover:bg-[var(--background)] hover:text-red-400 text-[var(--muted)]'}`}
               >
-                <Heart className={`w-5 h-5 transition-colors ${isWishlisted ? 'fill-current' : ''}`} />
+                <Heart className={`w-4 h-4 transition-colors ${isWishlisted ? 'fill-current' : ''}`} />
               </button>
             </div>
           </div>
 
           {/* Tabs Section */}
           <div className="flex-1">
-            <div className="flex border-b border-(--card-border) mb-8 overflow-x-auto no-scrollbar">
+            <div className="flex border-b border-(--card-border) mb-6 overflow-x-auto no-scrollbar">
               <button 
                 onClick={() => setActiveTab('specs')}
-                className={`px-8 py-4 font-black text-[10px] uppercase tracking-[0.3em] transition-all relative whitespace-nowrap ${activeTab === 'specs' ? 'text-[var(--primary)]' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
+                className={`px-6 py-3 font-black text-[9px] uppercase tracking-[0.2em] transition-all relative whitespace-nowrap ${activeTab === 'specs' ? 'text-[var(--primary)]' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
               >
-                Tech Specs
-                {activeTab === 'specs' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[var(--primary)] shadow-[0_0_15px_rgba(34,211,238,0.8)]" />}
+                Specifications
+                {activeTab === 'specs' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[var(--primary)]" />}
               </button>
               <button 
                 onClick={() => setActiveTab('reviews')}
-                className={`px-8 py-4 font-black text-[10px] uppercase tracking-[0.3em] transition-all relative whitespace-nowrap ${activeTab === 'reviews' ? 'text-[var(--primary)]' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
+                className={`px-6 py-3 font-black text-[9px] uppercase tracking-[0.2em] transition-all relative whitespace-nowrap ${activeTab === 'reviews' ? 'text-[var(--primary)]' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}`}
               >
-                Build Reviews ({product.reviews || 0})
-                {activeTab === 'reviews' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[var(--primary)] shadow-[0_0_15px_rgba(34,211,238,0.8)]" />}
+                User Feedback ({product.reviews || 0})
+                {activeTab === 'reviews' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[var(--primary)]" />}
               </button>
             </div>
 
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 pb-12">
               {activeTab === 'specs' ? (
-                <div className="space-y-10">
+                <div className="space-y-6">
                   {/* Brief Specs Summary */}
-                  <div className="bg-[var(--input)]/20 p-8 rounded-3xl border border-(--card-border)">
-                    <h3 className="text-[10px] font-black text-[var(--primary)] uppercase tracking-[0.3em] mb-4">Brief Overview</h3>
-                    <p className="text-sm text-[var(--foreground)] font-medium leading-relaxed italic">
+                  <div className="bg-[var(--input)]/20 p-5 rounded-2xl border border-(--card-border)">
+                    <h3 className="text-[8px] font-black text-[var(--primary)] uppercase tracking-[0.3em] mb-3 opacity-70">Sector Brief</h3>
+                    <p className="text-[11px] text-[var(--foreground)] font-medium leading-relaxed italic text-black dark:text-white">
                       {product.specs}
                     </p>
                   </div>
 
                   {/* Detailed Key-Value Grid */}
                   <div>
-                    <h3 className="text-[10px] font-black text-[var(--primary)] uppercase tracking-[0.3em] mb-6">Technical Parameters</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-1">
-                      {/* Standard Specs (Always shown) */}
-                      <div className="flex justify-between items-center py-4 border-b border-(--card-border) group cursor-default">
-                        <span className="text-[var(--muted)] text-[10px] font-black uppercase tracking-widest group-hover:text-[var(--primary)]/50 transition-colors">Manufacturer</span>
-                        <span className="text-[var(--foreground)] text-[10px] font-black group-hover:text-[var(--primary)] transition-colors">{product.brand}</span>
+                    <h3 className="text-[8px] font-black text-[var(--primary)] uppercase tracking-[0.3em] mb-4 opacity-70">Technical Manifest</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-0.5">
+                      {/* Standard Specs */}
+                      <div className="flex justify-between items-center py-2 border-b border-(--card-border) group cursor-default">
+                        <span className="text-[var(--muted)] text-[9px] font-black uppercase tracking-widest">Brand</span>
+                        <span className="text-[var(--foreground)] text-[9px] font-black text-black dark:text-white">{product.brand}</span>
                       </div>
-                      <div className="flex justify-between items-center py-4 border-b border-(--card-border) group cursor-default">
-                        <span className="text-[var(--muted)] text-[10px] font-black uppercase tracking-widest group-hover:text-[var(--primary)]/50 transition-colors">Category</span>
-                        <span className="text-[var(--foreground)] text-[10px] font-black group-hover:text-[var(--primary)] transition-colors">{product.category}</span>
+                      <div className="flex justify-between items-center py-2 border-b border-(--card-border) group cursor-default">
+                        <span className="text-[var(--muted)] text-[9px] font-black uppercase tracking-widest">Category</span>
+                        <span className="text-[var(--foreground)] text-[9px] font-black text-black dark:text-white">{product.category}</span>
                       </div>
 
                       {/* Custom Detailed Specs */}
                       {(product.fullSpecs || []).map((spec: any, i: number) => (
-                        <div key={i} className="flex justify-between items-center py-4 border-b border-(--card-border) group cursor-default">
-                          <span className="text-[var(--muted)] text-[10px] font-black uppercase tracking-widest group-hover:text-[var(--primary)]/50 transition-colors">{spec.label}</span>
-                          <div className="text-[var(--foreground)] text-[10px] font-black group-hover:text-[var(--primary)] transition-colors">
-                            {spec.value === 'true' ? (
-                              <div className="bg-green-500/10 text-green-500 p-1 rounded-lg border border-green-500/20 shadow-[0_0_10px_rgba(34,197,94,0.1)]">
-                                <Check size={14} strokeWidth={4} />
-                              </div>
-                            ) : spec.value === 'false' ? (
-                              <div className="bg-red-500/10 text-red-500 p-1 rounded-lg border border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.1)]">
-                                <X size={14} strokeWidth={4} />
-                              </div>
-                            ) : (
-                              <span>{spec.value}</span>
-                            )}
+                        <div key={i} className="flex justify-between items-center py-2 border-b border-(--card-border) group cursor-default">
+                          <span className="text-[var(--muted)] text-[9px] font-black uppercase tracking-widest">{spec.label}</span>
+                          <div className="text-[var(--foreground)] text-[9px] font-black text-black dark:text-white">
+                            {spec.value === 'true' ? <Check size={12} className="text-green-500" strokeWidth={4} /> : 
+                             spec.value === 'false' ? <X size={12} className="text-red-500" strokeWidth={4} /> : 
+                             spec.value}
                           </div>
                         </div>
                       ))}
@@ -489,46 +481,46 @@ export default function ProductDetails() {
                   </div>
                 </div>
               ) : (
-                <div className="space-y-8">
-                  {/* Reviews Header & Write Review Action */}
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[var(--input)]/20 p-6 rounded-3xl border border-(--card-border) mb-8">
+                <div className="space-y-6">
+                  {/* Reviews Header */}
+                  <div className="flex justify-between items-center bg-[var(--input)]/20 p-4 rounded-2xl border border-(--card-border)">
                     <div>
-                      <h3 className="text-xl font-black text-[var(--foreground)] tracking-tight uppercase">Product Feedback</h3>
-                      <p className="text-xs text-[var(--muted)] font-bold tracking-widest uppercase mt-1">Authentic owner experiences</p>
+                      <h3 className="text-sm font-black text-[var(--foreground)] uppercase text-black dark:text-white">Feedback Hub</h3>
+                      <p className="text-[8px] text-[var(--muted)] font-black tracking-widest uppercase">Verified user logs</p>
                     </div>
                     {canReview && (
                       <button 
                         onClick={() => setIsReviewModalOpen(true)}
-                        className="bg-[var(--primary)] hover:opacity-90 text-white dark:text-black font-black px-6 py-3 rounded-xl text-xs uppercase tracking-widest shadow-lg transition-all active:scale-95 flex items-center gap-2"
+                        className="bg-[var(--primary)] hover:opacity-90 text-white dark:text-black font-black px-4 py-2 rounded-lg text-[9px] uppercase tracking-widest shadow-md flex items-center gap-1.5 transition-all"
                       >
-                        <MessageSquare size={16} /> Write a Review
+                        <Plus size={12} /> Log Experience
                       </button>
                     )}
                   </div>
 
                   {/* Reviews List */}
-                  <div className="space-y-6">
+                  <div className="grid grid-cols-1 gap-4">
                     {reviewsList.length === 0 ? (
-                      <div className="text-center py-12 bg-[var(--input)]/30 rounded-3xl border border-dashed border-(--card-border)">
-                        <MessageSquare className="mx-auto text-[var(--muted)] opacity-20 mb-4" size={48} />
-                        <p className="text-[var(--muted)] text-sm font-medium italic">No reviews recorded yet for this system unit.</p>
+                      <div className="text-center py-10 bg-[var(--input)]/10 rounded-2xl border border-dashed border-(--card-border)">
+                        <MessageSquare className="mx-auto text-[var(--muted)] opacity-10 mb-3" size={32} />
+                        <p className="text-[var(--muted)] text-[10px] font-black uppercase tracking-widest">No logs recorded in this sector</p>
                       </div>
                     ) : (
                       reviewsList.map((review) => (
-                        <div key={review._id} className="bg-[var(--card)] p-8 rounded-3xl border border-(--card-border) hover:border-[var(--primary)]/20 transition-all group">
-                          <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-xl bg-[var(--primary)]/10 flex items-center justify-center text-[var(--primary)] font-black text-xs border border-[var(--primary)]/20 transition-all uppercase">
+                        <div key={review._id} className="bg-[var(--card)] p-5 rounded-2xl border border-(--card-border) shadow-sm">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-[var(--primary)]/10 flex items-center justify-center text-[var(--primary)] font-black text-[10px] border border-[var(--primary)]/20 uppercase">
                                 {review.userName.substring(0, 2)}
                               </div>
                               <div>
-                                <p className="font-black text-[var(--foreground)] text-sm tracking-tight uppercase">{review.userName}</p>
-                                <p className="text-[9px] text-[var(--muted)] font-black uppercase tracking-[0.2em]">{new Date(review.createdAt).toLocaleDateString()}</p>
+                                <p className="font-black text-[var(--foreground)] text-[11px] uppercase text-black dark:text-white leading-none">{review.userName}</p>
+                                <p className="text-[8px] text-[var(--muted)] font-black uppercase tracking-[0.1em] mt-1">{new Date(review.createdAt).toLocaleDateString()}</p>
                               </div>
                             </div>
-                            <StarRating rating={review.rating} size={12} />
+                            <StarRating rating={review.rating} size={10} />
                           </div>
-                          <p className="text-sm text-[var(--muted)] leading-relaxed font-medium italic tracking-wide">
+                          <p className="text-[11px] text-[var(--muted)] leading-relaxed font-medium italic">
                             "{review.comment}"
                           </p>
                         </div>
@@ -545,33 +537,23 @@ export default function ProductDetails() {
       {/* Zoom Lightbox */}
       <AnimatePresence>
         {zoomImage && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-10">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setZoomImage(null)}
-              className="absolute inset-0 bg-black/95 backdrop-blur-xl cursor-zoom-out"
+              className="absolute inset-0 bg-black/90 backdrop-blur-md cursor-zoom-out"
             />
-            
             <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative max-w-5xl w-full aspect-square md:aspect-video bg-transparent flex items-center justify-center z-10 pointer-events-none"
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative max-w-4xl w-full flex items-center justify-center z-10 pointer-events-none"
             >
-              <img 
-                src={zoomImage} 
-                alt="Product Zoom" 
-                className="max-w-full max-h-full object-contain drop-shadow-[0_0_30px_rgba(34,211,238,0.2)]" 
-              />
-              
-              <button 
-                onClick={() => setZoomImage(null)}
-                className="absolute -top-12 right-0 md:-right-12 p-3 text-white bg-slate-900 border border-slate-800 rounded-full transition-all pointer-events-auto active:scale-90"
-              >
-                <X size={24} />
+              <img src={zoomImage} alt="Product Zoom" className="max-w-full max-h-[80vh] object-contain drop-shadow-2xl" />
+              <button onClick={() => setZoomImage(null)} className="absolute -top-10 right-0 p-2 text-white bg-slate-900 rounded-full pointer-events-auto active:scale-90">
+                <X size={20} />
               </button>
             </motion.div>
           </div>
@@ -589,62 +571,34 @@ export default function ProductDetails() {
               onClick={() => setIsReviewModalOpen(false)}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             />
-            
             <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              initial={{ scale: 0.9, opacity: 0, y: 10 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative w-full max-w-lg bg-[var(--card)] border border-(--card-border) rounded-3xl shadow-2xl z-10 overflow-hidden"
+              exit={{ scale: 0.9, opacity: 0, y: 10 }}
+              className="relative w-full max-w-md bg-[var(--card)] border border-(--card-border) rounded-2xl shadow-2xl z-10 overflow-hidden"
             >
-              <div className="p-8">
+              <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <div>
-                    <h2 className="text-2xl font-black text-[var(--foreground)] tracking-tight uppercase">Write a Review</h2>
-                    <p className="text-xs text-[var(--muted)] font-black uppercase tracking-widest mt-1">Component: {product.name}</p>
-                  </div>
-                  <button 
-                    onClick={() => setIsReviewModalOpen(false)}
-                    className="p-2 text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-                  >
-                    <X size={24} />
-                  </button>
+                  <h2 className="text-xl font-black text-[var(--foreground)] uppercase text-black dark:text-white">Log Feedback</h2>
+                  <button onClick={() => setIsReviewModalOpen(false)} className="text-[var(--muted)] hover:text-[var(--foreground)]"><X size={20} /></button>
                 </div>
-
-                <form onSubmit={submitReview} className="space-y-6">
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-black text-[var(--muted)] uppercase tracking-widest block">Overall Rating</label>
-                    <div className="flex items-center gap-4 bg-[var(--input)] border border-(--card-border) p-4 rounded-2xl w-fit">
-                      <StarRating rating={newRating} size={32} interactive onRatingChange={setNewRating} />
-                      <span className="text-xl font-black text-[var(--primary)] w-8 text-center">{newRating}</span>
-                    </div>
+                <form onSubmit={submitReview} className="space-y-5">
+                  <div className="bg-[var(--input)] border border-(--card-border) p-3 rounded-xl flex items-center justify-between">
+                    <span className="text-[9px] font-black text-[var(--muted)] uppercase">Rating</span>
+                    <StarRating rating={newRating} size={24} interactive onRatingChange={setNewRating} />
                   </div>
-
-                  <div className="space-y-3">
-                    <label className="text-[10px] font-black text-[var(--muted)] uppercase tracking-widest block">Your Comment</label>
-                    <textarea
-                      required
-                      placeholder="What was your experience with this hardware?"
-                      className="w-full bg-[var(--input)] border border-(--card-border) rounded-2xl p-5 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all h-32 resize-none text-sm font-medium leading-relaxed"
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="flex gap-4">
-                    <button
-                      type="button"
-                      onClick={() => setIsReviewModalOpen(false)}
-                      className="flex-1 bg-[var(--input)] hover:bg-[var(--card-border)] text-[var(--foreground)] font-black py-4 rounded-xl transition-all active:scale-95 uppercase tracking-widest text-xs"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={submittingReview}
-                      className="flex-[2] bg-[var(--primary)] hover:opacity-90 text-white dark:text-black font-black py-4 rounded-xl transition-all active:scale-95 shadow-lg flex items-center justify-center gap-2 uppercase tracking-widest text-xs disabled:opacity-50"
-                    >
-                      {submittingReview ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />}
-                      Submit Review
+                  <textarea
+                    required
+                    placeholder="Describe your build experience..."
+                    className="w-full bg-[var(--input)] border border-(--card-border) rounded-xl p-4 text-[var(--foreground)] focus:border-[var(--primary)] outline-none transition-all h-28 resize-none text-xs font-medium text-black dark:text-white"
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                  />
+                  <div className="flex gap-3">
+                    <button type="button" onClick={() => setIsReviewModalOpen(false)} className="flex-1 bg-[var(--input)] text-[var(--foreground)] font-black py-3 rounded-xl text-[9px] uppercase tracking-widest">Cancel</button>
+                    <button type="submit" disabled={submittingReview} className="flex-[2] bg-[var(--primary)] text-white dark:text-black font-black py-3 rounded-xl text-[9px] uppercase tracking-widest flex items-center justify-center gap-2">
+                      {submittingReview ? <Loader2 className="animate-spin" size={14} /> : <Send size={14} />}
+                      Execute Log
                     </button>
                   </div>
                 </form>
@@ -657,24 +611,23 @@ export default function ProductDetails() {
       <style jsx global>{`
         .product-swiper .custom-bullet {
           display: inline-block;
-          width: 20px;
+          width: 12px;
           height: 3px;
           background: var(--card-border);
-          margin: 0 4px;
+          margin: 0 3px;
           border-radius: 4px;
           cursor: pointer;
           transition: all 0.3s ease;
         }
         .product-swiper .custom-bullet-active {
           background: var(--primary);
-          width: 40px;
-          box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+          width: 24px;
         }
         .swiper-pagination {
-          bottom: 24px !important;
+          bottom: 16px !important;
         }
         .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
+          width: 3px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
           background: transparent;
