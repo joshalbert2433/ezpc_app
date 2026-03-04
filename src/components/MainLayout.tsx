@@ -1,7 +1,7 @@
-// src/components/MainLayout.tsx
 import React from 'react';
 import Header from './Header';
 import SupportChatWidget from './SupportChatWidget';
+import Footer from './Footer';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -11,9 +11,12 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans flex flex-col">
       <Header />
-      {children}
+      <main className="flex-1">
+        {children}
+      </main>
+      <Footer />
       <SupportChatWidget />
     </div>
   );
