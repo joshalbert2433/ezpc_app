@@ -13,7 +13,9 @@ import {
   Minimize2,
   ExternalLink,
   ImageIcon,
-  Paperclip
+  Paperclip,
+  Check,
+  CheckCheck
 } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
@@ -26,6 +28,7 @@ interface Message {
   senderRole: 'user' | 'admin';
   text?: string;
   image?: string;
+  seen?: boolean;
   createdAt: string;
 }
 
@@ -51,8 +54,11 @@ export default function SupportChatWidget() {
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [isOtherTyping, setIsOtherTyping] = useState(false);
+  const [typingName, setTypingName] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Initialize socket connection with explicit config
@@ -86,6 +92,10 @@ export default function SupportChatWidget() {
           );
           
           if (!exists) {
+            // If we are viewing the chat, mark as seen
+            if (isOpen && view === 'chat') {
+              markAsSeen();
+            }
             return { ...t, messages: [...t.messages, message], updatedAt: new Date().toISOString() };
           }
         }
@@ -99,18 +109,44 @@ export default function SupportChatWidget() {
       fetchTickets();
     };
 
+    const handleTyping = ({ userId, userName, isTyping }: any) => {
+      if (userId !== user?.id) {
+        setIsOtherTyping(isTyping);
+        setTypingName(userName);
+      }
+    };
+
+    const handleSeen = ({ userId }: any) => {
+      if (userId !== user?.id) {
+        setTickets(prev => prev.map(t => {
+          if (t._id === selectedTicketId) {
+            return {
+              ...t,
+              messages: t.messages.map(m => m.senderId === user?.id ? { ...m, seen: true } : m)
+            };
+          }
+          return t;
+        }));
+      }
+    };
+
     socket.on('message-received', handleMessage);
     socket.on('refresh-ticket', handleRefresh);
+    socket.on('user-typing', handleTyping);
+    socket.on('messages-seen', handleSeen);
 
     return () => {
       socket.off('message-received', handleMessage);
       socket.off('refresh-ticket', handleRefresh);
+      socket.off('user-typing', handleTyping);
+      socket.off('messages-seen', handleSeen);
     };
-  }, [selectedTicketId]);
+  }, [selectedTicketId, isOpen, view, user]);
 
   useEffect(() => {
     if (socketRef.current && selectedTicketId) {
       socketRef.current.emit('join-ticket', selectedTicketId);
+      markAsSeen();
       return () => {
         socketRef.current?.emit('leave-ticket', selectedTicketId);
       };
@@ -134,10 +170,50 @@ export default function SupportChatWidget() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [selectedTicketId, tickets]);
+  }, [selectedTicketId, tickets, isOtherTyping]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const markAsSeen = async () => {
+    if (!selectedTicketId) return;
+    try {
+      await fetch(`/api/tickets/${selectedTicketId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'mark-seen' }),
+      });
+      if (socketRef.current) {
+        socketRef.current.emit('mark-seen', { ticketId: selectedTicketId, userId: user?.id });
+      }
+    } catch (error) {
+      console.error('Error marking as seen:', error);
+    }
+  };
+
+  const handleTypingIndicator = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setChatMessage(e.target.value);
+    
+    if (socketRef.current && selectedTicketId) {
+      socketRef.current.emit('typing', { 
+        ticketId: selectedTicketId, 
+        userId: user?.id, 
+        userName: user?.name, 
+        isTyping: true 
+      });
+
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      
+      typingTimeoutRef.current = setTimeout(() => {
+        socketRef.current?.emit('typing', { 
+          ticketId: selectedTicketId, 
+          userId: user?.id, 
+          userName: user?.name, 
+          isTyping: false 
+        });
+      }, 2000);
+    }
   };
 
   const fetchTickets = async () => {
@@ -237,6 +313,15 @@ export default function SupportChatWidget() {
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedTicketId || (!chatMessage.trim() && !previewImage)) return;
+
+    // Clear typing status immediately
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    socketRef.current?.emit('typing', { 
+      ticketId: selectedTicketId, 
+      userId: user?.id, 
+      userName: user?.name, 
+      isTyping: false 
+    });
 
     const text = chatMessage;
     const image = previewImage;
@@ -341,13 +426,18 @@ export default function SupportChatWidget() {
                         className="p-4 bg-[var(--card)] border border-(--card-border) rounded-2xl hover:border-[var(--primary)] transition-all cursor-pointer group"
                       >
                         <div className="flex justify-between items-start mb-1">
-                          <span className={`px-1.5 py-0.5 rounded-[4px] text-[7px] font-black uppercase tracking-widest ${
-                            ticket.status === 'open' ? 'bg-orange-500/10 text-orange-500' :
-                            ticket.status === 'in-progress' ? 'bg-blue-500/10 text-blue-500' :
-                            'bg-green-500/10 text-green-500'
-                          }`}>
-                            {ticket.status}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className={`px-1.5 py-0.5 rounded-[4px] text-[7px] font-black uppercase tracking-widest ${
+                              ticket.status === 'open' ? 'bg-orange-500/10 text-orange-500' :
+                              ticket.status === 'in-progress' ? 'bg-blue-500/10 text-blue-500' :
+                              'bg-green-500/10 text-green-500'
+                            }`}>
+                              {ticket.status}
+                            </span>
+                            {ticket.messages.some(m => m.senderRole === 'admin' && !m.seen) && (
+                              <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+                            )}
+                          </div>
                           <span className="text-[8px] font-bold text-[var(--muted)]">{new Date(ticket.updatedAt).toLocaleDateString()}</span>
                         </div>
                         <h5 className="text-xs font-black text-[var(--foreground)] truncate group-hover:text-[var(--primary)] text-black dark:text-white">{ticket.subject}</h5>
@@ -387,13 +477,30 @@ export default function SupportChatWidget() {
                             </div>
                           )}
                           {msg.text && <div>{msg.text}</div>}
-                          <div className={`text-[8px] font-bold mt-1 uppercase opacity-60 ${isAdmin ? 'text-left' : 'text-right'}`}>
-                            {new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                          <div className={`flex items-center gap-1 mt-1 opacity-60 ${isAdmin ? 'justify-start' : 'justify-end'}`}>
+                            <span className="text-[8px] font-bold uppercase">
+                              {new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                            </span>
+                            {!isAdmin && (
+                              msg.seen ? <CheckCheck size={10} className="text-white dark:text-black" /> : <Check size={10} className="text-white dark:text-black" />
+                            )}
                           </div>
                         </div>
                       </div>
                     );
                   })}
+                  {isOtherTyping && (
+                    <div className="flex justify-start">
+                      <div className="bg-[var(--input)] text-[var(--foreground)] px-4 py-2 rounded-2xl rounded-bl-none text-xs flex items-center gap-2">
+                        <div className="flex gap-1">
+                          <span className="w-1.5 h-1.5 bg-[var(--primary)] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                          <span className="w-1.5 h-1.5 bg-[var(--primary)] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                          <span className="w-1.5 h-1.5 bg-[var(--primary)] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                        </div>
+                        <span className="font-bold uppercase text-[8px] tracking-widest">{typingName} is typing...</span>
+                      </div>
+                    </div>
+                  )}
                   <div ref={messagesEndRef} />
                 </div>
 
@@ -426,7 +533,7 @@ export default function SupportChatWidget() {
                       <input 
                         type="text"
                         value={chatMessage}
-                        onChange={(e) => setChatMessage(e.target.value)}
+                        onChange={handleTypingIndicator}
                         placeholder="Type message..."
                         className="flex-1 bg-[var(--input)] border border-(--card-border) rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-[var(--primary)] text-black dark:text-white"
                         disabled={sending || isUploading}

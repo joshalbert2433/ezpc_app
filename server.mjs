@@ -53,6 +53,14 @@ app.prepare().then(() => {
       io.to(ticketId).emit('refresh-ticket');
     });
 
+    socket.on('typing', ({ ticketId, userId, userName, isTyping }) => {
+      socket.to(ticketId).emit('user-typing', { userId, userName, isTyping });
+    });
+
+    socket.on('mark-seen', ({ ticketId, userId }) => {
+      io.to(ticketId).emit('messages-seen', { ticketId, userId });
+    });
+
     socket.on('disconnect', () => {
       console.log('Client disconnected:', socket.id);
     });

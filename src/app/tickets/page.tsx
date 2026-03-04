@@ -14,7 +14,9 @@ import {
   ChevronRight,
   HeadphonesIcon,
   ImageIcon,
-  Paperclip
+  Paperclip,
+  Check,
+  CheckCheck
 } from 'lucide-react';
 import Link from 'next/link';
 import { io, Socket } from 'socket.io-client';
@@ -25,6 +27,7 @@ interface Message {
   senderRole: 'user' | 'admin';
   text?: string;
   image?: string;
+  seen?: boolean;
   createdAt: string;
 }
 
@@ -53,8 +56,11 @@ export default function UserTicketsPage() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [sending, setSending] = useState(false);
+  const [isOtherTyping, setIsOtherTyping] = useState(false);
+  const [typingName, setTypingName] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     socketRef.current = io(undefined, {
@@ -66,22 +72,55 @@ export default function UserTicketsPage() {
       console.log('Socket Connection Error:', err.message);
     });
 
-    socketRef.current.on('message-received', () => {
-      fetchUserTickets();
+    socketRef.current.on('message-received', (message: Message) => {
+      setTickets(prev => prev.map(t => {
+        if (t._id === selectedTicketId) {
+          const exists = t.messages.some(m => 
+            (m.text === message.text && m.senderId === message.senderId && Math.abs(new Date(m.createdAt).getTime() - new Date(message.createdAt).getTime()) < 2000)
+          );
+          if (!exists) {
+            if (selectedTicketId) markAsSeen(selectedTicketId);
+            return { ...t, messages: [...t.messages, message], updatedAt: new Date().toISOString() };
+          }
+        }
+        return t;
+      }));
     });
 
     socketRef.current.on('refresh-ticket', () => {
       fetchUserTickets();
     });
 
+    socketRef.current.on('user-typing', ({ userId, userName, isTyping }: any) => {
+      if (userId !== user?.id) {
+        setIsOtherTyping(isTyping);
+        setTypingName(userName);
+      }
+    });
+
+    socketRef.current.on('messages-seen', ({ userId }: any) => {
+      if (userId !== user?.id) {
+        setTickets(prev => prev.map(t => {
+          if (t._id === selectedTicketId) {
+            return {
+              ...t,
+              messages: t.messages.map(m => m.senderId === user?.id ? { ...m, seen: true } : m)
+            };
+          }
+          return t;
+        }));
+      }
+    });
+
     return () => {
       if (socketRef.current) socketRef.current.disconnect();
     };
-  }, []);
+  }, [selectedTicketId, user]);
 
   useEffect(() => {
     if (socketRef.current && selectedTicketId) {
       socketRef.current.emit('join-ticket', selectedTicketId);
+      markAsSeen(selectedTicketId);
       return () => {
         socketRef.current?.emit('leave-ticket', selectedTicketId);
       };
@@ -98,10 +137,49 @@ export default function UserTicketsPage() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [selectedTicketId, tickets]);
+  }, [selectedTicketId, tickets, isOtherTyping]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const markAsSeen = async (ticketId: string) => {
+    try {
+      await fetch(`/api/tickets/${ticketId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'mark-seen' }),
+      });
+      if (socketRef.current) {
+        socketRef.current.emit('mark-seen', { ticketId, userId: user?.id });
+      }
+    } catch (error) {
+      console.error('Error marking as seen:', error);
+    }
+  };
+
+  const handleTypingIndicator = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setChatMessage(e.target.value);
+    
+    if (socketRef.current && selectedTicketId) {
+      socketRef.current.emit('typing', { 
+        ticketId: selectedTicketId, 
+        userId: user?.id, 
+        userName: user?.name, 
+        isTyping: true 
+      });
+
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      
+      typingTimeoutRef.current = setTimeout(() => {
+        socketRef.current?.emit('typing', { 
+          ticketId: selectedTicketId, 
+          userId: user?.id, 
+          userName: user?.name, 
+          isTyping: false 
+        });
+      }, 2000);
+    }
   };
 
   const fetchUserTickets = async () => {
@@ -184,6 +262,15 @@ export default function UserTicketsPage() {
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedTicketId || (!chatMessage.trim() && !previewImage)) return;
+
+    // Clear typing status immediately
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    socketRef.current?.emit('typing', { 
+      ticketId: selectedTicketId, 
+      userId: user?.id, 
+      userName: user?.name, 
+      isTyping: false 
+    });
 
     const text = chatMessage;
     const image = previewImage;
@@ -272,13 +359,18 @@ export default function UserTicketsPage() {
                   }`}
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border ${
-                      ticket.status === 'open' ? 'bg-orange-500/10 text-orange-500 border-orange-500/20' :
-                      ticket.status === 'in-progress' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
-                      'bg-green-500/10 text-green-500 border-green-500/20'
-                    }`}>
-                      {ticket.status}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border ${
+                        ticket.status === 'open' ? 'bg-orange-500/10 text-orange-500 border-orange-500/20' :
+                        ticket.status === 'in-progress' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+                        'bg-green-500/10 text-green-500 border-green-500/20'
+                      }`}>
+                        {ticket.status}
+                      </span>
+                      {ticket.messages.some(m => m.senderRole === 'admin' && !m.seen) && (
+                        <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-sm shadow-red-500/50"></span>
+                      )}
+                    </div>
                     <span className="text-[9px] font-bold text-[var(--muted)]">{new Date(ticket.updatedAt).toLocaleDateString()}</span>
                   </div>
                   <h4 className="font-black text-sm text-[var(--foreground)] truncate group-hover:text-[var(--primary)] transition-colors text-black dark:text-white">{ticket.subject}</h4>
@@ -325,13 +417,28 @@ export default function UserTicketsPage() {
                           )}
                           {msg.text && <div>{msg.text}</div>}
                         </div>
-                        <span className="text-[9px] font-bold text-[var(--muted)] uppercase px-1">
-                          {isAdmin ? 'System Support' : 'You'} • {new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                        </span>
+                        <div className={`flex items-center gap-1 text-[9px] font-bold text-[var(--muted)] uppercase px-1 ${isAdmin ? 'justify-start' : 'justify-end'}`}>
+                          <span>{isAdmin ? 'System Support' : 'You'} • {new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                          {!isAdmin && (
+                            msg.seen ? <CheckCheck size={10} className="text-[var(--primary)]" /> : <Check size={10} />
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
                 })}
+                {isOtherTyping && (
+                  <div className="flex justify-start">
+                    <div className="bg-[var(--input)] text-[var(--foreground)] px-5 py-3 rounded-2xl rounded-bl-none text-xs flex items-center gap-3 border border-(--card-border)">
+                      <div className="flex gap-1">
+                        <span className="w-1.5 h-1.5 bg-[var(--primary)] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                        <span className="w-1.5 h-1.5 bg-[var(--primary)] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                        <span className="w-1.5 h-1.5 bg-[var(--primary)] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                      </div>
+                      <span className="font-black uppercase text-[10px] tracking-widest text-[var(--muted)]">{typingName} is typing...</span>
+                    </div>
+                  </div>
+                )}
                 <div ref={messagesEndRef} />
               </div>
 
@@ -364,7 +471,7 @@ export default function UserTicketsPage() {
                     <input 
                       type="text"
                       value={chatMessage}
-                      onChange={(e) => setChatMessage(e.target.value)}
+                      onChange={handleTypingIndicator}
                       placeholder="Type your message..."
                       className="flex-1 bg-[var(--input)]/50 border border-(--card-border) rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-[var(--primary)] transition-all text-black dark:text-white"
                       disabled={sending || isUploading}

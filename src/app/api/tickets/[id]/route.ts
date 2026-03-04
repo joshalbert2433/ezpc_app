@@ -89,6 +89,13 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
       }
       ticket.internalNotes = internalNote;
+    } else if (action === 'mark-seen') {
+      // Mark all messages from the other party as seen
+      ticket.messages.forEach((msg: any) => {
+        if (msg.senderId.toString() !== session.id) {
+          msg.seen = true;
+        }
+      });
     } else {
       return NextResponse.json({ message: 'Invalid action' }, { status: 400 });
     }
@@ -97,7 +104,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     // Emit socket event if global.io is available (set in server.mjs)
     if ((global as any).io) {
-      (global as any).io.to(id).emit('refresh-ticket');
+      if (action === 'mark-seen') {
+        (global as any).io.to(id).emit('messages-seen', { ticketId: id, userId: session.id });
+      } else {
+        (global as any).io.to(id).emit('refresh-ticket');
+      }
+      
       if (action === 'send') {
         const lastMessage = ticket.messages[ticket.messages.length - 1];
         (global as any).io.to(id).emit('message-received', lastMessage);

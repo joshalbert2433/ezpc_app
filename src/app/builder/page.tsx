@@ -105,10 +105,10 @@ export default function PCBuilderPage() {
       const fetchParts = async () => {
         setLoadingParts(true);
         try {
-          const res = await fetch(`/api/products?category=${activeSlot.category}`);
+          const res = await fetch(`/api/products?category=${activeSlot.category}&limit=100`);
           if (res.ok) {
             const data = await res.json();
-            setPartsList(data);
+            setPartsList(data.products || []);
           }
         } catch (error) {
           toast.error(`Failed to load ${activeSlot.category} parts`);

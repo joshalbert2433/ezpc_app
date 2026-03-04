@@ -16,9 +16,16 @@ export async function GET(request: NextRequest) {
     const brand = searchParams.get('brand');
     if (brand) query.brand = { $in: brand.split(',') };
     
-    const maxPrice = searchParams.get('maxPrice');
-    if (maxPrice) query.price = { $lte: parseFloat(maxPrice) };
+    // Price filter will be handled in aggregation pipeline for accuracy
+    const maxPriceParam = searchParams.get('maxPrice');
+    const maxPrice = maxPriceParam ? parseFloat(maxPriceParam) : null;
+    const minPriceParam = searchParams.get('minPrice');
+    const minPrice = minPriceParam ? parseFloat(minPriceParam) : null;
     
+    // Badge filters (sale, featured, hot, etc.)
+    const badges = searchParams.get('badges');
+    if (badges) query.badge = { $in: badges.split(',') };
+
     const search = searchParams.get('search');
     if (search) {
       query.$or = [
@@ -29,13 +36,59 @@ export async function GET(request: NextRequest) {
     }
 
     const sort = searchParams.get('sort');
-    let sortOptions = {};
-    if (sort === 'low') sortOptions = { price: 1 };
-    else if (sort === 'high') sortOptions = { price: -1 };
-    else sortOptions = { createdAt: -1 };
+    let sortStage: any = { $sort: { createdAt: -1 } };
+    if (sort === 'low') sortStage = { $sort: { effectivePrice: 1 } };
+    else if (sort === 'high') sortStage = { $sort: { effectivePrice: -1 } };
 
-    const products = await Product.find(query).sort(sortOptions);
-    return NextResponse.json(products);
+    // Pagination
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const skip = (page - 1) * limit;
+
+    // Use aggregation to handle effective price filtering and sorting
+    const basePipeline = [
+      { $match: query },
+      {
+        $addFields: {
+          effectivePrice: {
+            $cond: {
+              if: {
+                $and: [
+                  { $eq: ["$badge", "sale"] },
+                  { $gt: ["$salePrice", 0] }
+                ]
+              },
+              then: "$salePrice",
+              else: "$price"
+            }
+          }
+        }
+      },
+      ...(maxPrice !== null ? [{ $match: { effectivePrice: { $lte: maxPrice } } }] : []),
+      ...(minPrice !== null ? [{ $match: { effectivePrice: { $gte: minPrice } } }] : [])
+    ];
+
+    // Get total count after filtering
+    const countResult = await Product.aggregate([
+      ...basePipeline,
+      { $count: "total" }
+    ]);
+    const total = countResult.length > 0 ? countResult[0].total : 0;
+    
+    const products = await Product.aggregate([
+      ...basePipeline,
+      sortStage,
+      { $skip: skip },
+      { $limit: limit }
+    ]);
+
+    return NextResponse.json({
+      products,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+      hasMore: page < Math.ceil(total / limit)
+    });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

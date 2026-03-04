@@ -27,9 +27,9 @@ export default function AdminProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('/api/products');
+      const res = await fetch('/api/products?limit=100');
       const data = await res.json();
-      setProducts(data);
+      setProducts(data.products || []);
     } catch (err) {
       toast.error('Failed to load products');
     } finally {

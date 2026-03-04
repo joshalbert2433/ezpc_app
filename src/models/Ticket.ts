@@ -6,6 +6,7 @@ export interface IMessage {
   senderRole: 'user' | 'admin';
   text?: string;
   image?: string;
+  seen?: boolean;
   createdAt: Date;
 }
 
@@ -30,6 +31,7 @@ const MessageSchema: Schema = new Schema({
   senderRole: { type: String, required: true, enum: ['user', 'admin'] },
   text: { type: String },
   image: { type: String },
+  seen: { type: Boolean, default: false },
 }, { timestamps: { createdAt: true, updatedAt: false } });
 
 const TicketSchema: Schema = new Schema(
