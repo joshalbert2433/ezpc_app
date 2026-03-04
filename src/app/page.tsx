@@ -132,18 +132,18 @@ export default function Home() {
         </div>
 
         {initialLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-             {[...Array(6)].map((_, i) => (
-               <div key={i} className="bg-[var(--card)] border border-(--card-border) rounded-2xl p-4 h-80 animate-pulse flex flex-col">
-                 <div className="aspect-square bg-[var(--input)] rounded-xl mb-4" />
-                 <div className="h-4 bg-[var(--input)] rounded w-3/4 mb-2" />
-                 <div className="h-3 bg-[var(--input)] rounded w-1/2" />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+             {[...Array(10)].map((_, i) => (
+               <div key={i} className="bg-[var(--card)] border border-(--card-border) rounded-2xl p-3 h-72 animate-pulse flex flex-col">
+                 <div className="aspect-square bg-[var(--input)] rounded-xl mb-3" />
+                 <div className="h-3 bg-[var(--input)] rounded w-3/4 mb-2" />
+                 <div className="h-2 bg-[var(--input)] rounded w-1/2" />
                </div>
              ))}
           </div>
         ) : products.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {products.map((product, index) => {
                 if (products.length === index + 1) {
                   return (
