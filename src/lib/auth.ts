@@ -1,32 +1,24 @@
-import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+import { encrypt, decrypt } from './jwt';
 
-const secretKey = process.env.JWT_SECRET || 'your-secret-key';
-const key = new TextEncoder().encode(secretKey);
+// These functions are for Node.js runtime (API routes)
+export async function login(user: any, req?: NextRequest) {
+  const { createSession } = await import('./session');
+  
+  const userAgent = req?.headers.get('user-agent') || 'Unknown Device';
+  const ip = req?.headers.get('x-forwarded-for') || 'Unknown IP';
+  
+  const sessionId = await createSession(String(user._id || user.id), userAgent, ip);
 
-export async function encrypt(payload: any) {
-  return await new SignJWT(payload)
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime('2h')
-    .sign(key);
-}
-
-export async function decrypt(input: string): Promise<any> {
-  const { payload } = await jwtVerify(input, key, {
-    algorithms: ['HS256'],
-  });
-  return payload;
-}
-
-export async function login(user: any) {
   const expires = new Date(Date.now() + 2 * 60 * 60 * 1000); // 2 hours
   const session = await encrypt({ 
     id: String(user._id || user.id),
+    sessionId,
     name: user.name,
     email: user.email,
     role: user.role,
+    image: user.image,
     expires 
   });
 
@@ -34,6 +26,16 @@ export async function login(user: any) {
 }
 
 export async function logout() {
+  const session = (await cookies()).get('session')?.value;
+  if (session) {
+    try {
+      const parsed = await decrypt(session);
+      const { deleteSession } = await import('./session');
+      await deleteSession(parsed.sessionId);
+    } catch (err) {
+      console.error('Logout cleanup failed:', err);
+    }
+  }
   (await cookies()).set('session', '', { expires: new Date(0) });
 }
 
@@ -47,7 +49,6 @@ export async function updateSession(request: NextRequest) {
   const session = request.cookies.get('session')?.value;
   if (!session) return;
 
-  // Refresh the session so it doesn't expire
   const parsed = await decrypt(session);
   parsed.expires = new Date(Date.now() + 2 * 60 * 60 * 1000);
   const res = NextResponse.next();

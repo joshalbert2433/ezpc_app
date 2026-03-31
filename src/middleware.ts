@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { decrypt } from '@/lib/auth';
+import { decrypt } from '@/lib/jwt';
 
 // Paths that are accessible without authentication
 const publicPaths = ['/', '/login', '/register', '/api/auth/login', '/api/auth/register', '/api/products'];

@@ -40,6 +40,10 @@ const UserSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user',
   },
+  image: {
+    type: String,
+    default: null,
+  },
   cart: { type: [CartItemSchema], default: [] },
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   addresses: { type: [AddressSchema], default: [] }

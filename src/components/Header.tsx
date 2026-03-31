@@ -4,6 +4,7 @@
 import { Search, ShoppingCart, Heart, User, Layers, LogOut, MapPin, User as UserIcon, Settings, MessageSquare } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSearch } from '../context/SearchContext';
 import { useAuth } from '../context/AuthContext';
@@ -60,17 +61,17 @@ const Header: React.FC = () => {
         <Link href="/" className="text-2xl font-black tracking-tighter text-[var(--primary)] hover:opacity-80 transition-opacity">EZPC_</Link>
 
         <div className="flex-1 max-w-2xl relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted)]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--foreground-muted)]" />
           <input 
             type="text"
             placeholder="Search products (RTX 5090, Ryzen 9...)"
-            className="w-full bg-[var(--input)] border border-(--card-border) rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:border-[var(--primary)] transition-all text-[var(--foreground)] placeholder:text-[var(--muted)]"
+            className="w-full bg-[var(--input)] border border-(--card-border) rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:border-[var(--primary)] transition-all text-[var(--foreground)] placeholder:text-[var(--foreground-muted)]"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
 
-        <div className="flex items-center gap-6 text-[var(--muted)]">
+        <div className="flex items-center gap-6 text-[var(--foreground-muted)]">
           <Link href="/builder" onClick={(e) => handleAuthRequired(e, '/builder')}>
             <Layers className="w-5 h-5 hover:text-[var(--primary)] cursor-pointer transition-colors" title="PC Builder" />
           </Link>
@@ -108,13 +109,22 @@ const Header: React.FC = () => {
                 <span className="text-sm font-bold hidden md:inline text-[var(--foreground)] group-hover:text-[var(--primary)] transition-colors">
                   {user.name}
                 </span>
-                <div className={`w-9 h-9 rounded-xl bg-[var(--input)] flex items-center justify-center border transition-all ${isDropdownOpen ? 'border-[var(--primary)] shadow-[0_0_10px_rgba(34,211,238,0.2)]' : 'border-(--card-border) group-hover:border-[var(--primary)]'}`}>
-                  <User className={`w-4 h-4 ${isDropdownOpen ? 'text-[var(--primary)]' : 'text-[var(--muted)] group-hover:text-[var(--primary)]'}`} />
+                <div className={`w-9 h-9 rounded-xl bg-[var(--input)] flex items-center justify-center border transition-all overflow-hidden relative ${isDropdownOpen ? 'border-[var(--primary)] shadow-[0_0_10px_rgba(34,211,238,0.2)]' : 'border-(--card-border) group-hover:border-[var(--primary)]'}`}>
+                  {user.image ? (
+                    <Image 
+                      src={user.image} 
+                      alt={user.name} 
+                      fill 
+                      className="object-cover"
+                    />
+                  ) : (
+                    <User className={`w-4 h-4 ${isDropdownOpen ? 'text-[var(--primary)]' : 'text-[var(--foreground-muted)] group-hover:text-[var(--primary)]'}`} />
+                  )}
                 </div>
               </div>
             ) : (
               <Link href="/login" className="flex items-center gap-2 group">
-                <User className="w-5 h-5 group-hover:text-[var(--primary)] transition-colors text-[var(--muted)]" />
+                <User className="w-5 h-5 group-hover:text-[var(--primary)] transition-colors text-[var(--foreground-muted)]" />
                 <span className="text-xs font-black uppercase tracking-widest hidden md:inline group-hover:text-[var(--primary)] transition-colors text-[var(--foreground)]">Sign In</span>
               </Link>
             )}
@@ -123,7 +133,7 @@ const Header: React.FC = () => {
             {isDropdownOpen && user && (
               <div className="absolute right-0 mt-3 w-56 bg-[var(--card)] border border-(--card-border) rounded-2xl shadow-2xl py-2 z-[999] animate-in fade-in zoom-in duration-200 backdrop-blur-xl">
                 <div className="px-4 py-3 border-b border-(--card-border) mb-1">
-                  <p className="text-[10px] text-[var(--muted)] font-black uppercase tracking-widest">Operator Session</p>
+                  <p className="text-[10px] text-[var(--foreground-muted)] font-black uppercase tracking-widest">Operator Session</p>
                   <p className="text-sm font-bold text-[var(--foreground)] truncate mt-0.5">{user.email}</p>
                 </div>
                 

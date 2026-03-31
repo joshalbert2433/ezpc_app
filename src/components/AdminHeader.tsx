@@ -3,6 +3,7 @@
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Bell, Search, User, Menu } from 'lucide-react';
+import Image from 'next/image';
 
 export default function AdminHeader() {
   const { user } = useAuth();
@@ -34,8 +35,17 @@ export default function AdminHeader() {
             <p className="text-sm font-black text-[var(--foreground)]">{user?.name}</p>
             <p className="text-[10px] font-black text-[var(--primary)] uppercase tracking-widest">Systems Admin</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-[var(--primary)]/10 border border-[var(--primary)]/20 flex items-center justify-center text-[var(--primary)] shadow-lg shadow-[var(--primary)]/5">
-            <User size={20} />
+          <div className="w-10 h-10 rounded-xl bg-[var(--primary)]/10 border border-[var(--primary)]/20 flex items-center justify-center text-[var(--primary)] shadow-lg shadow-[var(--primary)]/5 overflow-hidden relative">
+            {user?.image ? (
+              <Image 
+                src={user.image} 
+                alt={user.name} 
+                fill 
+                className="object-cover"
+              />
+            ) : (
+              <User size={20} />
+            )}
           </div>
         </div>
       </div>
